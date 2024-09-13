@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import {
   BarChart,
@@ -12,27 +12,35 @@ import {
 } from "recharts";
 
 // Function to observe when elements enter and exit the viewport
-const useInView = (threshold = 0.6) => {
+const useInView = (threshold: number = 0.6) => {
   const [isInView, setInView] = useState(false);
-  const ref = (element: never) => {
-    if (element) {
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          setInView(entry.isIntersecting);
-        },
-        { threshold }
-      );
-      observer.observe(element);
-      return () => observer.unobserve(element); // Clean up observer
+  const ref = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    const observerCallback = ([entry]: IntersectionObserverEntry[]) => {
+      setInView(entry.isIntersecting);
+    };
+
+    const observer = new IntersectionObserver(observerCallback, { threshold });
+    if (ref.current) {
+      observer.observe(ref.current);
     }
-  };
+
+    return () => {
+      if (ref.current) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        observer.unobserve(ref.current);
+      }
+    };
+  }, [threshold]);
+
   return [isInView, ref] as const;
 };
 
 const ComparisonSection = () => {
-  const [isInView1, ref1] = useInView(0.5); // Visible at 60% viewport
-  const [isInView2, ref2] = useInView(0.6); // For Image | Content (with 2x2 grid)
-  const [isInView3, ref3] = useInView(0.3); // For Content | Image (with 2x2 grid)
+  const [isInView1, ref1] = useInView(0.3);
+  const [isInView2, ref2] = useInView(0.3);
+  const [isInView3, ref3] = useInView(0.4);
 
   // Data for the bar chart
   const data = [
@@ -41,44 +49,40 @@ const ComparisonSection = () => {
   ];
 
   return (
-    <div className="space-y-36 mb-32">
+    <div className="md:space-y-36 mb-32">
       {/* First Layout: Content | Chart */}
       <section
         ref={ref1}
-        className={`relative h-auto bg-primary-800 py-24 flex flex-col items-center justify-center transition-opacity duration-700 ${isInView1 ? "opacity-100" : "opacity-0"
+        className={`relative h-auto bg-primary-800 md:py-24 py-6 flex flex-col items-center justify-center transition-opacity duration-700 ${isInView1 ? "opacity-100" : "opacity-0"
           }`}
       >
-        <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center overflow-hidden">
+        <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 md:gap-12 items-center overflow-hidden">
           {/* Left Side: Heading, Subheading and List */}
-          <div
-            ref={ref1}
-            className="text-left">
+          <div className="text-left p-6">
             <h2 className="text-3xl md:text-6xl md:leading-tight font-bold text-white uppercase mb-12">
               Descubre porque la cremación es tu mejor opción:
             </h2>
             <p className="mt-4 text-lg md:text-2xl text-white mb-12">
-              De acuerdo con la <a href="https://nfda.org">NFDA</a>, el costo promedio de un entierro tradicional ronda los $9,995. 
-              A esto se suman los costos de adquirir una parcela, la lápida, las flores y otros gastos administrativos, lo que puede {" "}
-              <strong>aumentar considerablemente</strong> el total.
+              De acuerdo con la <a className="italic" href="https://nfda.org">NFDA</a>, el costo promedio de un entierro tradicional ronda los <strong>$9,995</strong>. A esto se suman los costos de adquirir una parcela, la lápida, las flores y otros gastos administrativos, lo que puede <strong>aumentar considerablemente</strong> el total.
             </p>
             <p className="mt-4 text-lg md:text-2xl text-white mb-12">
-              En <strong>Cremación Directa</strong>, te ofrecemos un plan completo de cremación por solo <strong>$995</strong>, que incluye:
+              En <strong>Cremación Directa</strong>, te ofrecemos un plan completo de cremación por solo <strong className="font-extrabold">$995</strong>, que incluye:
             </p>
 
-            <div className="grid grid-cols-2 gap-4 mt-6">
+            <div className="grid grid-cols-2 gap-4 md:mt-6">
               <div>
                 <ul className="space-y-5">
                   <li className="flex items-start">
                     <Image src="/icons/check.svg" alt="check icon" width={24} height={24} />
-                    <p className="text-xl text-white ml-2">Recogido y traslado al Instituto de Ciencias Forenses.</p>
+                    <p className="md:text-xl text-white ml-2">Recogido y traslado al Instituto de Ciencias Forenses.</p>
                   </li>
                   <li className="flex items-start">
                     <Image src="/icons/check.svg" alt="check icon" width={24} height={24} />
-                    <p className="text-xl text-white ml-2">Traslado a nuestras facilidades.</p>
+                    <p className="md:text-xl text-white ml-2">Traslado a nuestras facilidades.</p>
                   </li>
                   <li className="flex items-start">
                     <Image src="/icons/check.svg" alt="check icon" width={24} height={24} />
-                    <p className="text-xl text-white ml-2">Tramitación de toda la permisología.</p>
+                    <p className="md:text-xl text-white ml-2">Tramitación de toda la permisología.</p>
                   </li>
                 </ul>
               </div>
@@ -86,26 +90,25 @@ const ComparisonSection = () => {
                 <ul className="space-y-5">
                   <li className="flex items-start">
                     <Image src="/icons/check.svg" alt="check icon" width={24} height={24} />
-                    <p className="text-xl text-white ml-2">Proceso completo de cremación.</p>
+                    <p className="md:text-xl text-white ml-2">Proceso completo de cremación.</p>
                   </li>
                   <li className="flex items-start">
                     <Image src="/icons/check.svg" alt="check icon" width={24} height={24} />
-                    <p className="text-xl text-white ml-2">Preparación de todas las certificaciones necesarias.</p>
+                    <p className="md:text-xl text-white ml-2">Preparación de todas las certificaciones necesarias.</p>
                   </li>
                   <li className="flex items-start">
                     <Image src="/icons/check.svg" alt="check icon" width={24} height={24} />
-                    <p className="text-xl text-white ml-2">Urna temporera.</p>
+                    <p className="md:text-xl text-white ml-2">Urna temporera.</p>
                   </li>
                 </ul>
               </div>
             </div>
-
           </div>
           {/* Right Side: Prices and Chart */}
-          <div className="text-center mb-8">
-            <p className="text-xl text-white line-through"> $9,995 </p>
+          <div className="text-center my-8">
+            <p className="md:text-xl text-xl text-white line-through"> $9,995 </p>
             <p className="text-7xl text-primary-200 font-bold mt-2"> $1,396 </p>
-            <div className="w-full mx-auto mt-8 px-12">
+            <div className="w-full mx-auto mt-24 md:mt-8 md:px-12">
               <ResponsiveContainer width="100%" height={350}>
                 <BarChart data={data} layout="vertical">
                   <XAxis type="number" tick={{ fill: 'white', fontSize: 14 }} />
@@ -115,7 +118,6 @@ const ComparisonSection = () => {
                     width={100}
                     tick={{ fill: 'white', fontSize: 14 }}
                   />
-                  {/* Custom Tooltip */}
                   <Tooltip contentStyle={{ backgroundColor: '#33C2DB', opacity: 0.7 }} />
                   <Bar dataKey="Costo" barSize={50}>
                     {data.map((entry, index) => (
@@ -129,25 +131,23 @@ const ComparisonSection = () => {
               </ResponsiveContainer>
             </div>
           </div>
-
-
         </div>
       </section>
 
       {/* Second Layout: Image | Content with 2x2 grid */}
       <section
         ref={ref2}
-        className={`relative h-auto py-10 flex flex-col items-center justify-center transition-opacity duration-700 ${isInView2 ? "opacity-100" : "opacity-0"
+        className={`relative h-auto pt-10 flex flex-col items-center justify-center transition-opacity duration-700 ${isInView2 ? "opacity-100" : "opacity-0"
           }`}
       >
         <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start justify-between">
           {/* Left Side: Image */}
-          <div className="relative w-full h-full rounded-xl overflow-hidden group">
+          <div className="relative w-full h-full rounded-xl overflow-hidden group md:block hidden">
             <Image
               src="/images/cremation-service.jpg"
               alt="Cremation Service"
               className="object-cover w-full h-full"
-              layout="fill"
+              fill
               loading="lazy"
             />
 
@@ -156,52 +156,47 @@ const ComparisonSection = () => {
             </svg>
           </div>
 
-
-
           {/* Right Side: Content with 2x2 Grid */}
           <div className="text-left p-12">
-            <h2 className="text-3xl md:text-6xl font-bold text-gray-800 uppercase md:leading-tight">
+            <h2 className="text-3xl md:text-6xl font-bold text-gray-800 uppercase md:leading-tight md:mb-20">
               Brindale paz a tus seres queridos
             </h2>
-            <div className="grid grid-cols-2 gap-6 mt-6">
+            <div className="grid md:grid-cols-2 grid-cols-1 md:gap-6 mt-6">
               <div>
-                <h3 className="text-xl  transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full inline-block px-4 py-2 my-10 text-start">
-                  Reduce el estrés
+                <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
+                  Reduce el estrés 🔻
                 </h3>
                 <p className="text-lg text-gray-600">
-                  Al planificar con nosotros, eliminas la carga emocional y
-                  financiera que los familiares suelen enfrentar en momentos difíciles.
+                  Al planificar con nosotros, eliminas la carga emocional y financiera.
                 </p>
               </div>
               <div>
-                <h3 className="text-xl  transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full inline-block px-4 py-2 my-10 text-start">
-                  Apoyo en el Proceso
+                <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
+                  Apoyo en el Proceso 🤝
                 </h3>
                 <p className="text-lg text-gray-600">
-                  Nuestros planes incluyen servicios completos de cremación, asegurando
-                  que tus seres queridos no tengan que preocuparse por la logística ni trámites.
+                  Nuestros planes incluyen servicios completos de cremación.
                 </p>
               </div>
               <div>
-                <h3 className="text-xl  transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full inline-block px-4 py-2 my-10 text-start">
-                  Transparencia de Costos
+                <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
+                  Transparencia 📝
                 </h3>
                 <p className="text-lg text-gray-600">
-                  Con un plan claro y sin costos ocultos, tus familiares sabrán exactamente qué esperar y podrán concentrarse en despedirse sin angustias financieras.
+                  Plan claro y sin costos ocultos.
                 </p>
               </div>
               <div>
-                <h3 className="text-xl  transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full inline-block px-4 py-2 my-10 text-start">
-                  Respaldo y Tranquilidad
+                <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
+                  Tranquilidad 🧘‍♀️
                 </h3>
                 <p className="text-lg text-gray-600">
-                  Nuestros servicios están diseñados para ofrecer tranquilidad y asegurar que todo esté gestionado de manera respetuosa, cuidando cada detalle en el proceso.
+                  Nuestros servicios están diseñados para respaldarte y ofrecerte tranquilidad en el proceso.
                 </p>
               </div>
             </div>
-            <div className="py-16">
-              <button
-                className="border-0 rounded-lg md:text-xl bg-primary-700 text-white font-bold inline-block px-6 py-3 transition delay-100 transform hover:scale-105">
+            <div className="md:py-16 pt-16">
+              <button className="border-0 rounded-lg md:text-xl bg-primary-700 text-white font-bold inline-block px-6 py-3 transition delay-100 transform hover:scale-105">
                 SUSCRIBETE AHORA
               </button>
             </div>
@@ -217,78 +212,66 @@ const ComparisonSection = () => {
       >
         <div className="container mx-auto h-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center overflow-hidden">
           {/* Left Side: Content with 2x2 Grid */}
-          <div className="text-left p-12">
+          <div className="text-left px-12">
             <h2 className="text-3xl md:text-6xl md:leading-tight font-bold text-gray-800 ">
               CONGELA EL PRECIO DE HOY
             </h2>
-            <div className="grid grid-cols-2 gap-6 mt-6">
+            <div className="grid md:grid-cols-2 grid-cols-1 md:gap-6 mt-6">
               <div>
-                <h3 className="text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full inline-block px-4 py-2 my-10 text-start">
-                  Zero Pronto
+                <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
+                  👌 Pronto
                 </h3>
-                <p className="text-lg text-gray-600">
-                Comienza tu plan de cremación sin necesidad de hacer un pago inicial. Ofrecemos cuotas accesibles y sin intereses,
-                lo que te permite obtener tranquilidad sin preocuparte por un desembolso inmediato.
+                <p className="md:text-lg text-gray-600">
+                  Comienza tu plan de cremación sin necesidad de hacer un pago inicial.
                 </p>
               </div>
               <div>
-                <h3 className="text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full inline-block px-4 py-2 my-10 text-start">
-                  Congela el precio
+                <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
+                  Precio ❄️
                 </h3>
-                <p className="text-lg text-gray-600">
-                  Puedes asegurar el costo actual de nuestros servicios, protegiéndote de futuros aumentos. Esto te permite pagar hoy un precio fijo, 
-                  y el plan seguirá siendo válido sin importar si los precios suben en el futuro.
+                <p className="md:text-lg text-gray-600">
+                  Asegura el costo actual de nuestros servicios y protégete de futuros aumentos.
                 </p>
               </div>
               <div>
-                <h3 className="text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full inline-block px-4 py-2 my-10 text-start">
-                  Desde $19,95
+                <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
+                  $19.95 💸
                 </h3>
-                <p className="text-lg text-gray-600">
-                Comienza con pagos mensuales accesibles, brindándote 
-                tranquilidad con un plan completo por una tarifa baja, ajustada a tu presupuesto.
+                <p className="md:text-lg text-gray-600">
+                  Comienza con pagos mensuales accesibles, brindando tranquilidad con un plan completo.
                 </p>
               </div>
               <div>
-                <h3 className="text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full inline-block px-4 py-2 my-10 text-start">
-                  Desde el primer día
+                <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
+                  Inmediato💨
                 </h3>
-                <p className="text-lg text-gray-600">
-                  El contratante puede disfrutar del servicio desde el primer día, 
-                  sin necesidad de saldar la totalidad del plan
+                <p className="md:text-lg text-gray-600">
+                  El contratante puede disfrutar del servicio desde el primer día.
                 </p>
               </div>
-              <div className="py-16">
-                  <button
-                    className="border-0 rounded-lg md:text-xl bg-primary-700 text-white font-bold inline-block px-6 py-3 transition delay-100 transform hover:scale-105">
-                    SUSCRIBETE AHORA
-                  </button>
-                </div>
+            </div>
+            <div className="md:py-16 pt-16">
+              <button className="border-0 rounded-lg md:text-xl bg-primary-700 text-white font-bold inline-block px-6 py-3 transition delay-100 transform hover:scale-105">
+                SUSCRIBETE AHORA
+              </button>
             </div>
           </div>
 
           {/* Right Side: Image */}
-          <div className="relative w-full h-full rounded-xl overflow-hidden group">
+          <div className="relative w-full h-full rounded-xl overflow-hidden group  md:block hidden">
             <Image
               src="/images/funeral-service.jpg"
               alt="Funeral Service"
               className="object-cover w-full h-full"
-              layout="fill"
+              fill
               loading="lazy"
             />
-
-            {/* Adjusted SVG border */}
-            <svg
-              className="absolute inset-0 w-full h-full"
-              viewBox="0 0 100 100"
-              preserveAspectRatio="none"
-            >
+            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
               <rect className="stroke-rect" x="0" y="0" width="100" height="100" rx="1" ry="1" fill="none" />
             </svg>
           </div>
         </div>
       </section>
-
     </div>
   );
 };

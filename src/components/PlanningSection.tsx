@@ -27,24 +27,25 @@ const PlanningSection = () => {
   return (
     <section
       ref={sectionRef}
-      className={`relative h-[50vh] py-16 flex items-center justify-center transition-opacity duration-1000 overflow-hidden ${
+      className={`relative md:h-[50vh] md:py-16 pt-16 pb-28 flex items-center justify-center transition-opacity duration-1000 overflow-hidden ${
         isVisible ? "opacity-100" : "opacity-0"
       }`}
     >
-      <div className="container mx-auto text-center px-8">
+      <div className="container mx-auto md:text-center px-8">
         <div className="flex items-center justify-center">
           {/* Left (Opening) Quote Image */}
           <div className="relative w-12 h-12 md:w-16 md:mb-12 md:h-16 mr-2">
             <Image
               src="/images/quotes.png"
               alt="Opening Quote"
-              layout="fill"
+              fill
+              className="w-2 h-2"
               objectFit="contain"
             />
           </div>
 
           {/* Heading Text */}
-          <h2 className="text-4xl md:text-7xl font-bold text-gray-800">
+          <h2 className="text-3xl text-center mt-12 md:mt-0 md:text-7xl font-bold text-gray-800">
             Planificar es un gesto de amor
           </h2>
 
@@ -53,7 +54,7 @@ const PlanningSection = () => {
             <Image
               src="/images/quotes.png"
               alt="Closing Quote"
-              layout="fill"
+              fill
               objectFit="contain"
             />
           </div>
@@ -68,7 +69,7 @@ const PlanningSection = () => {
       </div>
 
       {/* Shield Image with Grow Effect */}
-      <div className="absolute bottom-10 right-96 w-24 h-24 md:w-32 md:h-32 transition-transform transform hover:scale-110 duration-300">
+      <div className="absolute md:block hidden bottom-10 right-96 w-24 h-24 md:w-32 md:h-32 transition-transform transform hover:scale-110 duration-300">
         <Image
           src="/images/shield.png" // Path to the shield image
           alt="Shield"
@@ -79,7 +80,7 @@ const PlanningSection = () => {
 
       {/* Absolute Positioned Arrows */}
       <div
-        className={`absolute left-0 top-1/2 transform transition-transform duration-700 ease-in-out ${
+        className={`absolute md:block hidden left-0 top-1/2 transform transition-transform duration-700 ease-in-out ${
           isVisible
             ? "-translate-y-3/4 -translate-x-3"
             : "-translate-y-1/2 -translate-x-full"
@@ -92,8 +93,9 @@ const PlanningSection = () => {
           height={350}
         />
       </div>
+
       <div
-        className={`absolute right-0 top-1/2 transform transition-transform duration-1000 ease-in-out ${
+        className={`absolute md:block hidden right-0 top-1/2 transform transition-transform duration-1000 ease-in-out ${
           isVisible
             ? "translate-y-5 translate-x-3"
             : "-translate-y-1/2 translate-x-full"

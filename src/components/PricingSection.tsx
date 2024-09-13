@@ -122,11 +122,11 @@ const PricingSection = () => {
 
   return (
     <section className="py-20">
-      <div className="container mx-auto text-center">
+      <div className="container mx-auto md:text-center md:p-0 p-6">
         {/* Small Heading */}
         <div
           ref={subTitleRef}
-          className="fade-in text-primary-500 text-xl mb-4 font-bold"
+          className="fade-in text-primary-500 md:text-xl mb-4 font-bold"
         >
           MÁS DE 20 AÑOS EN EL MERCADO
         </div>
@@ -134,7 +134,7 @@ const PricingSection = () => {
         {/* Main Heading */}
         <div
           ref={titleRef}
-          className="fade-in text-4xl md:text-6xl font-bold text-gray-800 mb-8 uppercase"
+          className="fade-in text-3xl md:text-6xl font-bold text-gray-800 mb-8 uppercase"
         >
           Planes diseñados para tu tranquilidad
         </div>
@@ -142,7 +142,7 @@ const PricingSection = () => {
         {/* Small Text */}
         <div
           ref={descriptionRef}
-          className="fade-in text-lg md:text-2xl text-gray-600 max-w-3xl mx-auto mb-8"
+          className="fade-in text-lg md:text-2xl text-gray-600 md:max-w-3xl mx-auto mb-8"
         >
           El presupuesto de cada familia es diferente. Es por eso que ofrecemos
           planes que se ajustan a todos los presupuestos. Tenemos planes con{" "}
@@ -155,10 +155,10 @@ const PricingSection = () => {
 
         {/* Toggle Button for 3 or 2 cards */}
         <div className="my-24 flex items-center justify-center">
-          <div className="relative inline-block w-1/4 h-14">
+          <div className="relative inline-block w-3/4 h-20 md:w-1/4 md:h-14">
             <button
               onClick={handleSwitchMode}
-              className={`absolute text-lg inset-y-0 left-0 w-1/2 h-full z-10 font-bold transition-colors duration-300 ease-in-out ${
+              className={`absolute md:text-lg inset-y-0 left-0 w-1/2 h-full z-10 font-bold transition-colors duration-300 ease-in-out ${
                 viewMode === 3 ? "text-white" : "text-gray-600"
               }`}
             >
@@ -166,7 +166,7 @@ const PricingSection = () => {
             </button>
             <button
               onClick={handleSwitchMode}
-              className={`absolute text-lg inset-y-0 right-0 w-1/2 h-full z-10 font-bold transition-colors duration-300 ease-in-out ${
+              className={`absolute md:text-lg inset-y-0 right-0 w-1/2 h-full z-10 font-bold transition-colors duration-300 ease-in-out ${
                 viewMode === 2 ? "text-white" : "text-gray-600"
               }`}
             >
@@ -215,13 +215,13 @@ const PricingSection = () => {
                   {/* Price Display for 3-Card View */}
                   {isPricingPlanThree(plan) ? (
                     // Render PricingPlanThree content
-                    <p className="text-7xl font-bold mb-2">
+                    <p className="md:text-7xl text-5xl font-bold mb-2">
                       {plan.price}
-                      <span className="text-4xl font-medium">{plan.period}</span>
+                      <span className="md:text-4xl text-lg font-medium">{plan.period}</span>
                     </p>
                   ) : (
                     // Render PricingPlanTwo content
-                    <div className="mb-2">
+                    <div className="mb-2 flex flex-col items-center" >
                       <p className="text-2xl text-red-500 line-through">
                         {plan.discountPrice}
                       </p>
@@ -242,14 +242,14 @@ const PricingSection = () => {
                     </p>
                   )}
 
-                  <p className="text-xl text-gray-900 my-10">
+                  <p className="md:text-xl text-lg text-gray-900 my-10">
                     {plan.description}
                   </p>
                 </div>
 
                 {/* Card Content */}
                 <div className="p-8 pt-4">
-                  <ul className="text-left my-4 space-y-2 text-lg">
+                  <ul className="text-left my-4 space-y-2 md:text-lg">
                     {[
                       "Recogido",
                       "Traslado a Instituto de Ciencias Forenses",

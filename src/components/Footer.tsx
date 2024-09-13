@@ -28,7 +28,7 @@ const Footer = () => {
           <Link className="link-button hover:font-bold py-2" href="/contact">
             Contacto
           </Link>
-          <Link className="link-button hover:font-bold py-2" href="/terms">
+          <Link className="hover:font-bold py-2" href="/terms">
             Términos y Condiciones
           </Link>
         </div>

@@ -1,26 +1,27 @@
-"use client"
-import React from 'react';
+"use client";
+import React from "react";
 
-const CTASection = () => {
+
+const CTASection: React.FC = () => {
   return (
-    <section className="bg-primary-800 px-72 py-32 flex justify-center items-center flex-col text-white">
-      
-      <h2 className="text-4xl md:text-7xl font-bold md:mb-12 pe-36 leading-loose">
+    <section className="bg-primary-800 px-8 md:px-72 py-16 md:py-32 flex justify-center items-center flex-col text-white">
+      <h2 className="text-3xl md:text-7xl font-bold md:mb-12 pe-0 md:pe-36 leading-snug md:text-start">
         Elimínale a tus seres queridos la angustia, incertidumbre y necesidad.
       </h2>
-      <div className="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
+      <div className="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0 mt-6 md:mt-0">
         {/* Subheading */}
-        <p className="text-lg md:text-3xl text-start pe-44">
-          Muchas veces nos toma por sorpresa y no sabemos ni por dónde empezar a coordinar y/o no estamos preparados económicamente. ¡Prepárate ahora!
+        <p className="text-base md:text-3xl text-start pe-0 md:pe-44 md:text-start mb-12">
+          Muchas veces nos toma por sorpresa y no sabemos ni por dónde empezar a
+          coordinar y/o no estamos preparados económicamente. <strong> ¡Prepárate ahora!</strong>
         </p>
 
         {/* CTA Button with Ripple Effect */}
-        <div className="relative">
-          <button className="relative text-xl uppercase z-10 bg-primary-100 text-primary-800 font-bold py-6 px-12 rounded-lg transition-transform duration-300 transform hover:scale-105 overflow-hidden">
+        <div className="relative mt-6 md:mt-0">
+          <button className="relative text-lg md:text-xl uppercase z-10 bg-primary-100 text-primary-800 font-bold py-4 md:py-6 px-8 md:px-12 rounded-lg transition-transform duration-300 transform hover:scale-105 overflow-hidden">
             Suscribete
           </button>
           {/* Ripple Effect */}
-          <div className="absolute inset-0 pointer-events-none ripple-container "></div>
+          <div className="absolute inset-0 pointer-events-none ripple-container"></div>
         </div>
       </div>
 
@@ -38,7 +39,7 @@ const CTASection = () => {
 
         .ripple-container::before,
         .ripple-container::after {
-          content: '';
+          content: "";
           position: absolute;
           top: 50%;
           left: 50%;
