@@ -1,98 +1,207 @@
 "use client";
-import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
+import Cookies from "js-cookie";
+import Image from "next/image";
 
-// Define types
-type PricingPlanThree = {
+// Define types for Pricing Plans
+export type PricingPlanThree = {
   name: string;
   price: string;
-  period: string; // Added period property
+  period: string;
   total: string;
   description: string;
+  link: string;
 };
 
-type PricingPlanTwo = {
+export type PricingPlanTwo = {
   name: string;
   price: string;
   discountPrice: string;
-  savings: string; // Added savings property
+  savings: number;
   description: string;
+  link: string;
 };
 
-const isPricingPlanThree = (
-  plan: PricingPlanThree | PricingPlanTwo
-): plan is PricingPlanThree => {
-  return (plan as PricingPlanThree).period !== undefined;
+export const isPricingPlanThree = (plan: PricingPlanTwo | PricingPlanThree): plan is PricingPlanThree => {
+  return (plan as PricingPlanThree).total !== undefined;
 };
-
 
 const PricingSection = () => {
   const [viewMode, setViewMode] = useState<2 | 3>(3); // 3 for 3 cards, 2 for 2 cards
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [transitionStage, setTransitionStage] = useState<
-    "fadeOut" | "fadeIn" | null
-  >(null);
+  const [transitionStage, setTransitionStage] = useState<"fadeOut" | "fadeIn" | null>(null);
+  const [country, setCountry] = useState<string | null>(null); // Country state from the cookie
 
-  const titleRef = useRef<HTMLDivElement>(null); // Reference for the title
-  const descriptionRef = useRef<HTMLDivElement>(null); // Reference for description text
-  const subTitleRef = useRef<HTMLDivElement>(null); // Reference for subtitle text
+  const titleRef = useRef<HTMLDivElement>(null);
+  const descriptionRef = useRef<HTMLDivElement>(null);
+  const subTitleRef = useRef<HTMLDivElement>(null);
 
-  const pricingPlansThree: PricingPlanThree[] = [
-    {
-      name: "24 Meses",
-      price: "$58.12",
-      period: "/mes",
-      total: "$1,395",
-      description: "El equilibrio perfecto entre pagos y plazo para tu comodidad.",
-    },
-    {
-      name: "70 Meses",
-      price: "$19.95",
-      period: "/mes",
-      total: "$1,396",
-      description: "Pagos mensuales bajos que se adaptan a tu presupuesto.",
-    },
-    {
-      name: "12 Meses",
-      price: "$116.25",
-      period: "/mes",
-      total: "$1,395",
-      description: "Completa tu plan rápidamente y disfruta de tranquilidad en menos tiempo.",
-    },
-  ];
-  
+  // Fetch the country from the 'user-country' cookie
+  useEffect(() => {
+    const userCountry = Cookies.get('user-country');
+    console.log("user-country cookie:", userCountry); // Debugging cookie value
 
-  const pricingPlansTwo: PricingPlanTwo[] = [
-    {
-      name: "Uso Inmediato",
-      price: "$995",
-      discountPrice: "$1,396",
-      savings: "$401",
-      description:
-        "Un solo pago. Para aquellos que necesitan usarlo inmediatamente",
+    if (userCountry) {
+      setCountry(userCountry);
+    }
+  }, []);
+
+  // Define the map for pricing based on country
+  const countryPriceMap: Record<string, { pricingPlansThree: PricingPlanThree[]; pricingPlansTwo: PricingPlanTwo[] }> = {
+    US: {
+      pricingPlansThree: [
+        {
+          name: "24 Meses",
+          price: "$58.12",
+          period: "/mes",
+          total: "$1,395",
+          description: "El equilibrio perfecto entre pagos y plazo para tu comodidad.",
+          link: "/us/plan-24-meses",
+        },
+        {
+          name: "70 Meses",
+          price: "$19.95",
+          period: "/mes",
+          total: "$1,396",
+          description: "Pagos mensuales bajos que se adaptan a tu presupuesto.",
+          link: "https://buy.stripe.com/test_7sIcOS0SwbV24zC144",
+        },
+        {
+          name: "12 Meses",
+          price: "$116.25",
+          period: "/mes",
+          total: "$1,395",
+          description: "Completa tu plan rápidamente y disfruta de tranquilidad en menos tiempo.",
+          link: "/us/plan-12-meses",
+        },
+      ],
+      pricingPlansTwo: [
+        {
+          name: "Uso Inmediato",
+          price: "$995",
+          discountPrice: "$1,396",
+          savings: 0,
+          description: "Un solo pago. Para aquellos que necesitan usarlo inmediatamente.",
+          link: "/us/uso-inmediato",
+        },
+        {
+          name: "Plan a futuro",
+          price: "$995",
+          discountPrice: "$1,396",
+          savings: 0,
+          description: "Disfrútalo cuando más lo necesites. Transferible a quien desees.",
+          link: "/us/plan-futuro",
+        },
+      ],
     },
-    {
-      name: "Plan a futuro",
-      price: "$995",
-      discountPrice: "$1,396",
-      savings: "$401",
-      description:
-        "Disfrútalo cuando más lo necesites. Transferible a quien desees",
+    PR: {
+      pricingPlansThree: [
+        {
+          name: "24 Meses",
+          price: "$58.12",
+          period: "/mes",
+          total: "$1,395",
+          description: "El equilibrio perfecto entre pagos y plazo para tu comodidad.",
+          link: "/pr/plan-24-meses",
+        },
+        {
+          name: "70 Meses",
+          price: "$19.95",
+          period: "/mes",
+          total: "$1,396",
+          description: "Pagos mensuales bajos que se adaptan a tu presupuesto.",
+          link: "https://buy.stripe.com/test_9AQ5mq9p21go4zC146",
+        },
+        {
+          name: "12 Meses",
+          price: "$116.25",
+          period: "/mes",
+          total: "$1,395",
+          description: "Completa tu plan rápidamente y disfruta de tranquilidad en menos tiempo.",
+          link: "/pr/plan-12-meses",
+        },
+      ],
+      pricingPlansTwo: [
+        {
+          name: "Uso Inmediato",
+          price: "$995",
+          discountPrice: "$1,396",
+          savings: 401,
+          description: "Un solo pago. Para aquellos que necesitan usarlo inmediatamente.",
+          link: "/pr/uso-inmediato",
+        },
+        {
+          name: "Plan a futuro",
+          price: "$995",
+          discountPrice: "$1,396",
+          savings: 401,
+          description: "Disfrútalo cuando más lo necesites. Transferible a quien desees.",
+          link: "/pr/plan-futuro",
+        },
+      ],
     },
-  ];
+    CO: {
+      pricingPlansThree: [
+        {
+          name: "24 Meses",
+          price: "$45.12",
+          period: "/mes",
+          total: "$1,080",
+          description: "El equilibrio perfecto entre pagos y plazo para tu comodidad.",
+          link: "/co/plan-24-meses",
+        },
+        {
+          name: "70 Meses",
+          price: "$15.95",
+          period: "/mes",
+          total: "$1,116",
+          description: "Pagos mensuales bajos que se adaptan a tu presupuesto.",
+          link: "https://buy.stripe.com/test_dR616afNq4sAgikeUX",
+        },
+        {
+          name: "12 Meses",
+          price: "$90.25",
+          period: "/mes",
+          total: "$1,083",
+          description: "Completa tu plan rápidamente y disfruta de tranquilidad en menos tiempo.",
+          link: "/co/plan-12-meses",
+        },
+      ],
+      pricingPlansTwo: [
+        {
+          name: "Uso Inmediato",
+          price: "$750",
+          discountPrice: "$1,116",
+          savings: 366,
+          description: "Un solo pago. Para aquellos que necesitan usarlo inmediatamente.",
+          link: "/co/uso-inmediato",
+        },
+        {
+          name: "Plan a futuro",
+          price: "$750",
+          discountPrice: "$1,116",
+          savings: 366,
+          description: "Disfrútalo cuando más lo necesites. Transferible a quien desees.",
+          link: "/co/plan-futuro",
+        },
+      ],
+    },
+  };
+
+  // Fallback to US if country is not found in the map
+  const selectedCountry = country || 'us';
+  const { pricingPlansThree = [], pricingPlansTwo = [] } = countryPriceMap[selectedCountry] || {};
 
   const handleSwitchMode = () => {
-    if (isTransitioning) return; // Prevent triggering during transition
+    if (isTransitioning) return;
 
     setIsTransitioning(true);
     setTransitionStage("fadeOut");
 
-    // Duration should match the fade-out animation duration
     setTimeout(() => {
-      setViewMode(viewMode === 3 ? 2 : 3); // Switch between 2 and 3 cards
+      setViewMode(viewMode === 3 ? 2 : 3);
       setTransitionStage("fadeIn");
 
-      // Duration should match the fade-in animation duration
       setTimeout(() => {
         setIsTransitioning(false);
         setTransitionStage(null);
@@ -123,7 +232,6 @@ const PricingSection = () => {
   return (
     <section className="py-20">
       <div className="container mx-auto md:text-center md:p-0 p-6">
-        {/* Small Heading */}
         <div
           ref={subTitleRef}
           className="fade-in text-primary-500 md:text-xl mb-4 font-bold"
@@ -131,7 +239,6 @@ const PricingSection = () => {
           MÁS DE 20 AÑOS EN EL MERCADO
         </div>
 
-        {/* Main Heading */}
         <div
           ref={titleRef}
           className="fade-in text-3xl md:text-6xl font-bold text-gray-800 mb-8 uppercase"
@@ -139,7 +246,6 @@ const PricingSection = () => {
           Planes diseñados para tu tranquilidad
         </div>
 
-        {/* Small Text */}
         <div
           ref={descriptionRef}
           className="fade-in text-lg md:text-2xl text-gray-600 md:max-w-3xl mx-auto mb-8"
@@ -153,7 +259,6 @@ const PricingSection = () => {
           </strong>
         </div>
 
-        {/* Toggle Button for 3 or 2 cards */}
         <div className="my-24 flex items-center justify-center">
           <div className="relative inline-block w-3/4 h-20 md:w-1/4 md:h-14">
             <button
@@ -181,7 +286,6 @@ const PricingSection = () => {
           </div>
         </div>
 
-        {/* Pricing Cards */}
         <div
           className={`relative cards-container ${
             transitionStage ? transitionStage : ""
@@ -199,7 +303,6 @@ const PricingSection = () => {
                   viewMode === 3 ? "" : "w-full md:w-1/3"
                 }`}
               >
-                {/* Curved Heading */}
                 <div
                   className="relative bg-secondary-gradient text-white p-8 pb-16 card-header"
                   style={{
@@ -214,19 +317,23 @@ const PricingSection = () => {
 
                   {/* Price Display for 3-Card View */}
                   {isPricingPlanThree(plan) ? (
-                    // Render PricingPlanThree content
                     <p className="md:text-7xl text-5xl font-bold mb-2">
                       {plan.price}
-                      <span className="md:text-4xl text-lg font-medium">{plan.period}</span>
+                      <span className="md:text-4xl text-lg font-medium">
+                        {plan.period}
+                      </span>
                     </p>
                   ) : (
-                    // Render PricingPlanTwo content
-                    <div className="mb-2 flex flex-col items-center" >
-                      <p className="text-2xl text-red-500 line-through">
-                        {plan.discountPrice}
-                      </p>
-                      <p className="text-gray-800 text-lg font-bold">Ahorra {plan.savings}</p>
-                    </div>
+                    plan.savings > 0 && (
+                      <div className="mb-2 flex flex-col items-center">
+                        <p className="text-2xl text-red-500 line-through">
+                          {plan.discountPrice}
+                        </p>
+                        <p className="text-gray-800 text-lg font-bold">
+                          Ahorra {plan.savings}
+                        </p>
+                      </div>
+                    )
                   )}
 
                   {/* Price Display for 2-Card View */}
@@ -234,12 +341,9 @@ const PricingSection = () => {
                     <p className="text-7xl font-bold mb-2">{plan.price}</p>
                   )}
 
-
                   {/* Total price only for 3-card view */}
                   {viewMode === 3 && "total" in plan && (
-                    <p className="text-lg mb-2">
-                      Total: {(plan as PricingPlanThree).total}
-                    </p>
+                    <p className="text-lg mb-2">Total: {plan.total}</p>
                   )}
 
                   <p className="md:text-xl text-lg text-gray-900 my-10">
@@ -272,9 +376,12 @@ const PricingSection = () => {
                       </li>
                     ))}
                   </ul>
-                  <button className="mt-6 w-full bg-primary-500 text-white py-3 px-6 rounded-lg font-bold hover:bg-primary-700 transition">
+                  <a
+                    href={plan.link}
+                    className="mt-6 w-full bg-primary-500 text-white py-3 px-6 rounded-lg font-bold hover:bg-primary-700 transition block text-center"
+                  >
                     Contrata Ahora
-                  </button>
+                  </a>
                 </div>
               </div>
             )
@@ -287,20 +394,16 @@ const PricingSection = () => {
           opacity: 0;
           transition: opacity 0.8s ease-in-out;
         }
-
         .fade-in-active {
           opacity: 1;
         }
-
         .cards-container {
           transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
         }
-
         .cards-container.fadeOut {
           opacity: 0;
           transform: scale(0.95);
         }
-
         .cards-container.fadeIn {
           opacity: 1;
           transform: scale(1);

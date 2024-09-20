@@ -10,9 +10,11 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
+import Cookies from 'js-cookie'; // For reading cookies
+import { ChartData, UseInViewReturn } from '@/types'; // Import your types
 
 // Function to observe when elements enter and exit the viewport
-const useInView = (threshold: number = 0.6) => {
+const useInView = (threshold: number = 0.6): UseInViewReturn => {
   const [isInView, setInView] = useState(false);
   const ref = useRef<HTMLElement | null>(null);
 
@@ -41,12 +43,39 @@ const ComparisonSection = () => {
   const [isInView1, ref1] = useInView(0.3);
   const [isInView2, ref2] = useInView(0.3);
   const [isInView3, ref3] = useInView(0.4);
+  
+  // Read user-country cookie
+  const [country, setCountry] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Log all cookies
+    console.log("All cookies:", document.cookie);
+  
+    const userCountry = Cookies.get('user-country');
+    console.log("user-country cookie:", userCountry);
+  
+    if (userCountry) {
+      setCountry(userCountry);
+    }
+  }, []);
+  
+
+  // Define costs for each country
+  const countryCosts: { [key: string]: number } = {
+    US: 1999,
+    PR: 1396,
+    CO: 750
+  };
+
+  // Determine the cost based on the country, default to 1396 if country is not found
+  const cremationCost = country ? countryCosts[country] || 1396 : 1396;
 
   // Data for the bar chart
-  const data = [
-    { name: "Cremación", Costo: 1396 },
+  const data: ChartData[] = [
+    { name: "Cremación", Costo: cremationCost },
     { name: "Entierro", Costo: 9995 },
   ];
+
 
   return (
     <div className="md:space-y-36 mb-32">
@@ -66,7 +95,7 @@ const ComparisonSection = () => {
               De acuerdo con la <a className="italic" href="https://nfda.org">NFDA</a>, el costo promedio de un entierro tradicional ronda los <strong>$9,995</strong>. A esto se suman los costos de adquirir una parcela, la lápida, las flores y otros gastos administrativos, lo que puede <strong>aumentar considerablemente</strong> el total.
             </p>
             <p className="mt-4 text-lg md:text-2xl text-white mb-12">
-              En <strong>Cremación Directa</strong>, te ofrecemos un plan completo de cremación por solo <strong className="font-extrabold">$995</strong>, que incluye:
+              En <strong>Cremación Directa</strong>, te ofrecemos un plan completo de cremación por solo <strong className="font-extrabold">${cremationCost}</strong>, que incluye:
             </p>
 
             <div className="grid grid-cols-2 gap-4 md:mt-6">
@@ -107,7 +136,7 @@ const ComparisonSection = () => {
           {/* Right Side: Prices and Chart */}
           <div className="text-center my-8">
             <p className="md:text-xl text-xl text-white line-through"> $9,995 </p>
-            <p className="text-7xl text-primary-200 font-bold mt-2"> $1,396 </p>
+            <p className="text-7xl text-primary-200 font-bold mt-2"> ${cremationCost} </p>
             <div className="w-full mx-auto mt-24 md:mt-8 md:px-12">
               <ResponsiveContainer width="100%" height={350}>
                 <BarChart data={data} layout="vertical">
