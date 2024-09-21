@@ -73,9 +73,9 @@ const PlanningSection = () => {
         <Image
           src="/images/shield.png" // Path to the shield image
           alt="Shield"
-          layout="fill"
-          objectFit="contain"
-        />
+          fill
+          className="object-contain"
+/>
       </div>
 
       {/* Absolute Positioned Arrows */}

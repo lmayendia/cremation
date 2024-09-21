@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 const Navbar = () => {
   const [showNavbar, setShowNavbar] = useState(true);
@@ -23,7 +24,7 @@ const Navbar = () => {
     <nav
       className={`${
         showNavbar ? "top-0" : "-top-20"
-      } py-8 fixed w-full z-20 p-4 transition-all duration-300 ${
+      } py-2 fixed w-full z-20 p-4 transition-all duration-300 ${
         isScrollingUp
           ? "bg-white opacity-70 text-gray-800 shadow-md"
           : "bg-transparent text-white"
@@ -31,8 +32,17 @@ const Navbar = () => {
     >
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
-        <div className="text-2xl font-bold">
-          <Link href="/">CremacionDirecta</Link>
+        <div className="hover:scale-105 transform transition delay-100" >
+          <Link href="/">
+            <Image
+            src='/images/logo.png'
+            width={200}
+            height={200}
+            alt="Logo Cremacion Directa"
+            >
+
+            </Image>
+          </Link>
         </div>
 
         {/* Navigation Links */}
@@ -44,8 +54,8 @@ const Navbar = () => {
           <Link className="link-button hover:font-bold py-2" href="/planes">
             Planes
           </Link>
-          <Link className="link-button hover:font-bold py-2" href="/services">
-            Servicios
+          <Link className="link-button hover:font-bold py-2" href="/proveedores">
+            Proveedores
           </Link>
           <Link className="link-button hover:font-bold py-2" href="/urnas">
             Urnas

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 const Footer = () => {
@@ -7,7 +8,16 @@ const Footer = () => {
         {/* Left Side: Logo and Rights */}
         <div className="flex flex-col items-center md:items-start mb-4 md:mb-0 ">
           <div className="text-2xl font-bold ">
-            <Link href="/">CremacionDirecta</Link>
+            <Link href="/">
+            <Image
+            src='/images/logo-white.png'
+            width={200}
+            height={200}
+            alt="Logo Cremacion Directa"
+            >
+
+            </Image>
+            </Link>
           </div>
           <p className="text-sm mt-12 border-t-2 pt-6">
             &copy; {new Date().getFullYear()} CremacionDirecta. All rights reserved.

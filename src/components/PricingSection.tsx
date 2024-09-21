@@ -52,17 +52,17 @@ const PricingSection = () => {
       pricingPlansThree: [
         {
           name: "24 Meses",
-          price: "$58.12",
+          price: "$83.13",
           period: "/mes",
-          total: "$1,395",
+          total: "$1,995",
           description: "El equilibrio perfecto entre pagos y plazo para tu comodidad.",
           link: "/us/plan-24-meses",
         },
         {
           name: "70 Meses",
-          price: "$19.95",
+          price: "$28.5",
           period: "/mes",
-          total: "$1,396",
+          total: "$1,995",
           description: "Pagos mensuales bajos que se adaptan a tu presupuesto.",
           link: "https://buy.stripe.com/test_7sIcOS0SwbV24zC144",
         },
@@ -70,7 +70,7 @@ const PricingSection = () => {
           name: "12 Meses",
           price: "$116.25",
           period: "/mes",
-          total: "$1,395",
+          total: "$1,995",
           description: "Completa tu plan rápidamente y disfruta de tranquilidad en menos tiempo.",
           link: "/us/plan-12-meses",
         },
@@ -78,17 +78,17 @@ const PricingSection = () => {
       pricingPlansTwo: [
         {
           name: "Uso Inmediato",
-          price: "$995",
-          discountPrice: "$1,396",
-          savings: 0,
+          price: "$1,496",
+          discountPrice: "$1,995",
+          savings: 499,
           description: "Un solo pago. Para aquellos que necesitan usarlo inmediatamente.",
           link: "/us/uso-inmediato",
         },
         {
           name: "Plan a futuro",
-          price: "$995",
-          discountPrice: "$1,396",
-          savings: 0,
+          price: "$1,496",
+          discountPrice: "$1,995",
+          savings: 499,
           description: "Disfrútalo cuando más lo necesites. Transferible a quien desees.",
           link: "/us/plan-futuro",
         },
@@ -356,12 +356,12 @@ const PricingSection = () => {
                   <ul className="text-left my-4 space-y-2 md:text-lg">
                     {[
                       "Recogido",
-                      "Traslado a Instituto de Ciencias Forenses",
+                      "Traslado*",
                       "Traslado a nuestras facilidades",
                       "Tramitación de permisología",
                       "Proceso de cremación",
                       "Preparación de certificaciones",
-                      "Urna temporera",
+                      "Urna alterna**",
                       "Entrega de cenizas",
                     ].map((item, idx) => (
                       <li key={idx} className="flex items-center">
@@ -387,6 +387,8 @@ const PricingSection = () => {
             )
           )}
         </div>
+        <h1 className="my-5 italic">*De ser nesecario se llevara Instituto de Ciencias Forenses.</h1>
+        <h1 className="my-5 italic">**Si desea una urna de lujo puede visitar nuestra seccion de <a href="/urnas" className="text-blue-400 underline">urnas</a>.</h1>
       </div>
 
       <style jsx>{`
