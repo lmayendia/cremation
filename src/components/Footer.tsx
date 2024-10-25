@@ -24,16 +24,16 @@ const Footer = () => {
 
         {/* Right Side: Navigation Links */}
         <div className="flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-10 text-xl border-b-2">
-          <Link className="link-button hover:font-bold py-2" href="/planes">
+          <Link className="hover:font-bold py-2" href="/planes">
             Planes
           </Link>
-          <Link className="link-button hover:font-bold py-2" href="/services">
+          <Link className="hover:font-bold py-2" href="/services">
             Servicios
           </Link>
-          <Link className="link-button hover:font-bold py-2" href="/urnas">
+          <Link className="hover:font-bold py-2" href="/urnas">
             Urnas
           </Link>
-          <Link className="link-button hover:font-bold py-2" href="/contact">
+          <Link className="hover:font-bold py-2" href="/contact">
             Contacto
           </Link>
           <Link className="hover:font-bold py-2" href="/terms">

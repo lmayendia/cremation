@@ -15,21 +15,19 @@ export const metadata: Metadata = {
   },
   
 };
-
-const isLoggedIn = Boolean(cookies().get('jwt')?.value);
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const isLoggedIn = Boolean(cookies().get('jwt')?.value);
   return (
     <html lang="en">
       <Head>
       <link rel="icon" href="/favicon.ico" sizes="any" />
       </Head>
       <body
-        className={`${noto_serif.className} antialiased grid min-h-dvh grid-rows-[auto-1fr-auto]`}
+        className={`${noto_serif.className} antialiased `}
       >
         <Navbar isLoggedIn={isLoggedIn} />
         {children}

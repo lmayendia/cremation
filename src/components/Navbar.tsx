@@ -1,5 +1,3 @@
-// components/Navbar.tsx
-
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -8,11 +6,11 @@ import { usePathname, useRouter } from "next/navigation";
 import LogoutButton from './LogoutButton';
 import { NavbarProps, HandlePlanesClick } from "@/types";
 
-
 const Navbar: React.FC<NavbarProps> = ({ isLoggedIn }) => {
   const [showNavbar, setShowNavbar] = useState<boolean>(true);
   const [scrollPos, setScrollPos] = useState<number>(0);
   const [isScrollingUp, setIsScrollingUp] = useState<boolean>(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const pathname: string | null = usePathname();
   const router = useRouter();
 
@@ -70,6 +68,7 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn }) => {
     } else {
       router.push("/#pricing");
     }
+    setIsMobileMenuOpen(false); // Close mobile menu on click
   };
 
   return (
@@ -80,7 +79,7 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn }) => {
         isScrollingUp ? "bg-white opacity-70 shadow-md" : "bg-transparent"
       }`}
     >
-      <div className="container mx-auto flex justify-between items-center">
+      <div className="container mx-auto flex justify-between items-center relative">
         {/* Logo */}
         <div className="hover:scale-105 transform transition delay-100">
           <Link href="/">
@@ -114,7 +113,7 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn }) => {
 
           {/* Profile Link and Logout Button */}
           <div className="flex space-x-6 items-center">
-            {isLoggedIn && (
+            {isLoggedIn ? (
               <>
                 {/* Profile Link with SVG */}
                 <Link href="/profile" className="flex items-center">
@@ -123,16 +122,17 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn }) => {
                     width={48}
                     height={48}
                     alt="Profile Icon"
-                    className={`${textColor === "text-gray-800" ? "fill-gray-800" : "fill-white"}`} // Conditional fill
+                    className={`${
+                      textColor === "text-gray-800" ? "fill-gray-800" : "fill-white"
+                    }`}
                   />
                 </Link>
                 <LogoutButton />
               </>
-            )}
-            {!isLoggedIn && (
+            ) : (
               <Link href="/sign-in">
                 <button className="bg-primary-500 border border-primary-500 text-white py-1 px-6 rounded hover:bg-primary-700 hover:border-primary-700 transition transform hover:scale-105 duration-300">
-                  Iniciar Sesion
+                  Iniciar Sesión
                 </button>
               </Link>
             )}
@@ -141,11 +141,11 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn }) => {
 
         {/* Mobile Menu Button */}
         <div className="md:hidden">
-          <button>
+          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             <svg
               className="w-6 h-6"
               fill="none"
-              stroke="currentColor"
+              stroke={isScrollingUp ? "black" : "white"}
               viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -157,6 +157,95 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn }) => {
               />
             </svg>
           </button>
+        </div>
+      </div>
+
+      {/* Mobile Navigation Links */}
+      <div
+        className={`fixed inset-0 bg-white z-30 flex flex-col items-start p-6 overflow-y-auto transition-transform duration-300 transform ${
+          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        {/* Close Button */}
+        <button
+          onClick={() => setIsMobileMenuOpen(false)}
+          className="self-end mb-4"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="black"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+
+        {/* Menu Items */}
+        <a
+          href="/#pricing"
+          onClick={handlePlanesClick}
+          className="link-button hover:font-bold py-2 cursor-pointer w-full text-left"
+        >
+          Planes
+        </a>
+        <Link
+          className="link-button hover:font-bold py-2 w-full text-left"
+          href="/proveedores"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          Proveedores
+        </Link>
+        <Link
+          className="link-button hover:font-bold py-2 w-full text-left"
+          href="/urnas"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          Urnas
+        </Link>
+        <Link
+          className="link-button hover:font-bold py-2 w-full text-left"
+          href="/contact"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          Contacto
+        </Link>
+
+        {/* Profile Link and Logout Button */}
+        <div className="flex flex-col space-y-2 items-start mt-4 w-full">
+          {isLoggedIn ? (
+            <>
+              <Link
+                href="/profile"
+                className="flex items-center w-full"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Image
+                  src="/icons/profile.svg"
+                  width={24}
+                  height={24}
+                  alt="Profile Icon"
+                />
+                <span className="ml-2">Perfil</span>
+              </Link>
+              <LogoutButton />
+            </>
+          ) : (
+            <Link
+              href="/sign-in"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="w-full"
+            >
+              <button className="bg-primary-500 border border-primary-500 text-white py-2 px-4 rounded hover:bg-primary-700 hover:border-primary-700 transition duration-300 w-full text-left">
+                Iniciar Sesión
+              </button>
+            </Link>
+          )}
         </div>
       </div>
     </nav>

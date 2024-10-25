@@ -40,7 +40,7 @@ const useInView = (threshold: number = 0.6): UseInViewReturn => {
 };
 
 const ComparisonSection = () => {
-  const [isInView1, ref1] = useInView(0.3);
+  const [isInView1, ref1] = useInView(0.2);
   const [isInView2, ref2] = useInView(0.3);
   const [isInView3, ref3] = useInView(0.4);
   
@@ -171,28 +171,23 @@ const ComparisonSection = () => {
         className={`relative h-auto pt-10 flex flex-col items-center justify-center transition-opacity duration-700 ${isInView2 ? "opacity-100" : "opacity-0"
           }`}
       >
-        <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-start justify-between">
-          {/* Left Side: Image */}
-          <div className="relative w-full h-full rounded-xl overflow-hidden group md:block hidden">
+        <div className="container mx-auto h-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center overflow-hidden">
+        {/* Left Side: Image */}
+          <div className="relative w-full md:h-5/6 rounded-xl overflow-hidden h-[350px]">
             <Image
-              src="/images/cremation-service.jpg"
+              src="/images/woman-old.jpeg"
               alt="Cremation Service"
-              className="object-cover w-full h-full"
+              className="object-cover w-full h-full "
               fill
-              loading="lazy"
             />
-
-            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-              <rect className="stroke-rect" x="0" y="0" width="100" height="100" rx="1" ry="1" fill="none" />
-            </svg>
           </div>
 
           {/* Right Side: Content with 2x2 Grid */}
-          <div className="text-left p-12">
+          <div className="text-left px-6 sm:mt-6">
             <h2 className="text-3xl md:text-6xl font-bold text-gray-800 uppercase md:leading-tight md:mb-20">
               Brindale paz a tus seres queridos
             </h2>
-            <div className="grid md:grid-cols-2 grid-cols-1 md:gap-6 mt-6">
+            <div className="grid md:grid-cols-2 grid-cols-2 gap-2 md:gap-6 mt-6">
               <div>
                 <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
                   Reduce el estrés 🔻
@@ -241,21 +236,32 @@ const ComparisonSection = () => {
       {/* Third Layout: Content | Image with 2x2 grid */}
       <section
         ref={ref3}
-        className={`relative h-auto py-12 flex flex-col items-center justify-center transition-opacity duration-700 ${isInView3 ? "opacity-100" : "opacity-0"
+        className={`relative h-auto md:py-12 sm:py-24 flex flex-col items-center justify-center transition-opacity duration-700 ${isInView3 ? "opacity-100" : "opacity-0"
           }`}
       >
         <div className="container mx-auto h-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center overflow-hidden">
           {/* Left Side: Content with 2x2 Grid */}
-          <div className="text-left px-12">
+          
+          {/* Right Side: Image */}
+          <div className="relative md:w-full md:h-full rounded-xl overflow-hidden group md:hidden block h-[400px] mt-6 md:mt-09">
+            <Image
+              src="/images/holding-hand.jpg"
+              alt="Funeral Service"
+              className="object-cover w-full h-full"
+              fill
+            />
+          </div>
+
+          <div className="text-left px-6">
             <h2 className="text-3xl md:text-6xl md:leading-tight font-bold text-gray-800 ">
               CONGELA EL PRECIO DE HOY
             </h2>
-            <div className="grid md:grid-cols-2 grid-cols-1 md:gap-6 mt-6">
+            <div className="grid grid-cols-2 gap-6 md:mt-6">
               <div>
                 <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
                   👌 Pronto
                 </h3>
-                <p className="md:text-lg text-gray-600">
+                <p className="text-lg text-gray-600">
                   Comienza tu plan de cremación sin necesidad de hacer un pago inicial.
                 </p>
               </div>
@@ -263,7 +269,7 @@ const ComparisonSection = () => {
                 <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
                   Precio ❄️
                 </h3>
-                <p className="md:text-lg text-gray-600">
+                <p className="text-lg text-gray-600">
                   Asegura el costo actual de nuestros servicios y protégete de futuros aumentos.
                 </p>
               </div>
@@ -271,7 +277,7 @@ const ComparisonSection = () => {
                 <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
                   $19.95 💸
                 </h3>
-                <p className="md:text-lg text-gray-600">
+                <p className="text-lg text-gray-600">
                   Comienza con pagos mensuales accesibles, brindando tranquilidad con un plan completo.
                 </p>
               </div>
@@ -279,7 +285,7 @@ const ComparisonSection = () => {
                 <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
                   Inmediato💨
                 </h3>
-                <p className="md:text-lg text-gray-600">
+                <p className="text-lg text-gray-600">
                   El contratante puede disfrutar del servicio desde el primer día.
                 </p>
               </div>
@@ -294,17 +300,13 @@ const ComparisonSection = () => {
           </div>
 
           {/* Right Side: Image */}
-          <div className="relative w-full h-full rounded-xl overflow-hidden group  md:block hidden">
+          <div className="relative w-full h-5/6 rounded-xl overflow-hidden md:block hidden">
             <Image
-              src="/images/funeral-service.jpg"
+              src="/images/holding-hand.jpg"
               alt="Funeral Service"
               className="object-cover w-full h-full"
               fill
-              loading="lazy"
             />
-            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-              <rect className="stroke-rect" x="0" y="0" width="100" height="100" rx="1" ry="1" fill="none" />
-            </svg>
           </div>
         </div>
       </section>

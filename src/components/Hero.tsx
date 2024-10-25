@@ -13,10 +13,10 @@ const Hero: React.FC = () => {
           alt="Cremacion Directa Logo"
           width={300}
           height={300}
-          className="lg:h-[350px] lg:w-[350px] md:h-[100px] md:w-[200px] hidden md:block mb-5"
+          className="lg:h-[350px] lg:w-[350px] md:h-[100px] md:w-[200px] hidden md:block sm:mx-start mb-5"
           priority
         />
-        <div className="mb-12 border-t-2 border-white w-full -translate-x-1/3 md:hidden"></div>
+        <div className="mb-12 border-t-2 border-white w-full -translate-x-1/4 md:hidden"></div>
         
         <h1 className="text-4xl lg:text-7xl font-bold leading-tight uppercase">
           Planifica con salud y vida, el camino a la vida eterna

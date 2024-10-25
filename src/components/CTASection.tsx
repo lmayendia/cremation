@@ -17,9 +17,11 @@ const CTASection: React.FC = () => {
 
         {/* CTA Button with Ripple Effect */}
         <div className="relative mt-6 md:mt-0">
-          <button className="relative text-lg md:text-xl uppercase z-10 bg-primary-100 text-primary-800 font-bold py-4 md:py-6 px-8 md:px-12 rounded-lg transition-transform duration-300 transform hover:scale-105 overflow-hidden">
-            Suscribete
-          </button>
+          <a href="#pricing">
+            <button className="relative text-lg md:text-xl uppercase z-10 bg-primary-100 text-primary-800 font-bold py-4 md:py-6 px-8 md:px-12 rounded-lg transition-transform duration-300 transform hover:scale-105 overflow-hidden">
+              Suscribete
+            </button>
+          </a>
           {/* Ripple Effect */}
           <div className="absolute inset-0 pointer-events-none ripple-container"></div>
         </div>

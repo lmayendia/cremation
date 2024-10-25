@@ -231,7 +231,7 @@ const PricingSection = () => {
 
   return (
     <section className="py-20" id="pricing">
-      <div className="container mx-auto md:text-center md:p-0 p-6">
+      <div className="container mx-auto md:text-center md:p-0 px-6">
         <div
           ref={subTitleRef}
           className="fade-in text-primary-500 md:text-xl mb-4 font-bold"

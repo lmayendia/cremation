@@ -34,7 +34,7 @@ const PlanningSection = () => {
       <div className="container mx-auto md:text-center px-8">
         <div className="flex items-center justify-center">
           {/* Left (Opening) Quote Image */}
-          <div className="relative w-12 h-12 md:w-16 md:mb-12 md:h-16 mr-2">
+          <div className="relative w-24 h-24 md:w-16 md:mb-12 md:h-16 mr-2">
             <Image
               src="/images/quotes.png"
               alt="Opening Quote"
@@ -50,7 +50,7 @@ const PlanningSection = () => {
           </h2>
 
           {/* Right (Closing) Quote Image with 180 Degree Rotation */}
-          <div className="relative w-12 h-12 md:w-16 md:mb-12 md:h-16 ml-2 rotate-180">
+          <div className="relative w-24 h-24 md:w-16 md:mb-12 md:h-16 ml-2 rotate-180">
             <Image
               src="/images/quotes.png"
               alt="Closing Quote"
