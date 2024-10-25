@@ -4,7 +4,7 @@ import React from "react";
 
 const CTASection: React.FC = () => {
   return (
-    <section className="bg-primary-800 px-8 md:px-28 py-16 md:py-32 flex justify-center items-center flex-col text-white">
+    <section className="bg-primary-500 px-8 md:px-28 py-16 md:py-32 flex justify-center items-center flex-col text-white">
       <h2 className="text-3xl md:text-7xl font-bold md:mb-12 pe-0 md:pe-36 leading-snug md:text-start">
         Elimínale a tus seres queridos la angustia, incertidumbre y necesidad.
       </h2>

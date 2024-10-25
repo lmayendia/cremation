@@ -82,8 +82,9 @@ const ComparisonSection = () => {
     <div className="md:space-y-36 mb-32">
       {/* First Layout: Content | Chart */}
       <section
+        id="about"
         ref={ref1}
-        className={`relative h-auto bg-primary-800 md:py-24 py-6 flex flex-col items-center justify-center transition-opacity duration-700 ${isInView1 ? "opacity-100" : "opacity-0"
+        className={`relative h-auto bg-primary-500 md:py-24 py-6 flex flex-col items-center justify-center transition-opacity duration-700 ${isInView1 ? "opacity-100" : "opacity-0"
           }`}
       >
         <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 md:gap-12 items-center overflow-hidden">
@@ -137,7 +138,7 @@ const ComparisonSection = () => {
           {/* Right Side: Prices and Chart */}
           <div className="text-center my-8">
             <p className="md:text-xl text-xl text-white line-through"> $9,995 </p>
-            <p className="text-7xl text-primary-200 font-bold mt-2"> ${cremationCost.full_price} </p>
+            <p className="text-7xl text-primary-100 font-bold mt-2"> ${cremationCost.full_price} </p>
             <div className="w-full mx-auto mt-24 md:mt-8 md:px-12">
               <ResponsiveContainer width="100%" height={350}>
                 <BarChart data={data} layout="vertical">
@@ -226,9 +227,12 @@ const ComparisonSection = () => {
               </div>
             </div>
             <div className="md:py-16 pt-16">
+            <a href="#pricing">
+
               <button className="border-0 rounded-lg md:text-xl bg-primary-700 text-white font-bold inline-block px-6 py-3 transition delay-100 transform hover:scale-105">
                 SUSCRIBETE AHORA
               </button>
+              </a>
             </div>
           </div>
         </div>
@@ -281,9 +285,11 @@ const ComparisonSection = () => {
               </div>
             </div>
             <div className="md:py-16 pt-16">
+            <a href="#pricing">
               <button className="border-0 rounded-lg md:text-xl bg-primary-700 text-white font-bold inline-block px-6 py-3 transition delay-100 transform hover:scale-105">
                 SUSCRIBETE AHORA
               </button>
+              </a>
             </div>
           </div>
 

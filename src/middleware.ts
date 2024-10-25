@@ -1,47 +1,58 @@
+// middleware.ts
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+// Define the paths that require authentication
+const protectedRoutes = ['/profile'];
+
 export async function middleware(req: NextRequest) {
-  // Check if the user-country cookie already exists
+  const { pathname } = req.nextUrl;
+
+  // ===== Handle user-country cookie =====
+  // Check if the 'user-country' cookie already exists
   const countryCookie = req.cookies.get('user-country');
-  
-  // If the cookie exists, skip the API call and proceed
-  if (countryCookie) {
-    return NextResponse.next(); // Continue with the request
+
+  // If the cookie exists, proceed without further processing for country setting
+  if (!countryCookie) {
+    // Retrieve the country code from Vercel's geolocation header
+    const country = req.headers.get('x-vercel-ip-country') || 'US'; // Default to 'US' if header is missing
+
+    // Create a response and set the 'user-country' cookie
+    const response = NextResponse.next();
+    response.cookies.set('user-country', country, {
+      httpOnly: false, // Accessible via JavaScript
+      secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+      path: '/', // Cookie is valid for all routes
+      maxAge: 60 * 60 * 24 * 30, // 30 days
+      sameSite: 'lax', // Mitigate CSRF
+    });
+
+    return response;
   }
 
-  // Retrieve the user's IP address from x-forwarded-for or fallback for local testing
-  const forwarded = req.headers.get('x-forwarded-for');
-  const ip = forwarded ? forwarded.split(',')[0] : '134.201.250.154'; // Default IP for testing
-  // Define the base URL (fallback to environment variable or localhost)
-  const baseUrl = req.nextUrl.origin || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+  // ===== Handle Authentication for Protected Routes =====
+  const isProtected = protectedRoutes.some((path) => pathname.startsWith(path));
 
-  // Call your custom API route to get the country code
-  const response = await fetch(`${baseUrl}/api/ip-lookup`, {
-    headers: {
-      'x-forwarded-for': ip
+  // If the route is protected, check for JWT in the cookies
+  if (isProtected) {
+    const token = req.cookies.get('jwt')?.value;
+
+    // If no token, redirect to the login page
+    if (!token) {
+      const url = req.nextUrl.clone();
+      url.pathname = '/sign-in';
+      return NextResponse.redirect(url);
     }
-  });
 
-  // Check if the API call was successful and extract country data
-  if (response.ok) {
-    const data = await response.json();
-    const country = data.country_code || 'US'; // Fallback to US if not found
-
-    // Create a response and set the country in a cookie
-    const res = NextResponse.next();
-    res.cookies.set('user-country', country, { httpOnly: false, maxAge: 60 * 60 * 24 * 30 }); // 30-day cookie
-
-    return res;
+    // Optionally, you can add additional validation logic for the JWT if needed.
+    // For now, we are simply checking for the presence of the token and letting Strapi handle the verification.
   }
 
-  // In case of error, fallback to US and proceed
-  const res = NextResponse.next();
-  res.cookies.set('user-country', 'US', { httpOnly: false, maxAge: 60 * 60 * 24 * 30 });
-  return res;
+  // Continue to the next middleware or request handler if everything is okay
+  return NextResponse.next();
 }
 
-// Apply middleware to specific paths (optional)
+// Apply middleware to all paths
 export const config = {
-  matcher: ['/'], // Apply to root path, but can be adjusted for specific routes
+  matcher: '/:path*',
 };
