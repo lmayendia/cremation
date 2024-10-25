@@ -18,7 +18,7 @@ const Hero: React.FC = () => {
         />
         <div className="mb-12 border-t-2 border-white w-full -translate-x-1/4 md:hidden"></div>
         
-        <h1 className="text-4xl lg:text-7xl font-bold leading-tight uppercase">
+        <h1 className="text-4xl lg:text-6xl font-bold leading-tight uppercase">
           Planifica con salud y vida, el camino a la vida eterna
         </h1>
         <p className="mt-4 text-base lg:text-2xl md:max-w-2xl max-w-maxxl py-5">
