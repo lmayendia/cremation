@@ -13,7 +13,7 @@ const Hero: React.FC = () => {
           alt="Cremacion Directa Logo"
           width={300}
           height={300}
-          className="lg:h-[350px] lg:w-[350px] md:h-[100px] md:w-[200px] hidden md:block sm:mx-start mb-5"
+          className="lg:h-[300px] lg:w-[300px] md:h-[100px] md:w-[200px] hidden md:block sm:mx-start my-5"
           priority
         />
         <div className="mb-12 border-t-2 border-white w-full -translate-x-1/4 md:hidden"></div>
