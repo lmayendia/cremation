@@ -6,13 +6,13 @@ const CTASection: React.FC = () => {
   return (
     <section className="bg-primary-500 px-8 md:px-28 py-16 md:py-32 flex justify-center items-center flex-col text-white">
       <h2 className="text-3xl md:text-7xl font-bold md:mb-12 pe-0 md:pe-36 leading-snug md:text-start">
-        Elimínale a tus seres queridos la angustia, incertidumbre y necesidad.
+        Elimínale a tus seres queridos la angustia, incertidumbre y responsabilidad económica.
       </h2>
       <div className="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0 mt-6 md:mt-0">
         {/* Subheading */}
         <p className="text-base md:text-3xl text-start pe-0 md:pe-44 md:text-start mb-12">
           Muchas veces nos toma por sorpresa y no sabemos ni por dónde empezar a
-          coordinar y/o no estamos preparados económicamente. <strong> ¡Prepárate ahora!</strong>
+          coordinar y/o no estamos preparados económicamente.  <strong className=""> Regalale paz a tus seres queridos y ¡Suscribete ahora!</strong>
         </p>
 
         {/* CTA Button with Ripple Effect */}

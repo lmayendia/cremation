@@ -1,18 +1,41 @@
 "use client";
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
 import LogoutButton from './LogoutButton';
+import Cookies from 'js-cookie';
+import { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { NavbarProps, HandlePlanesClick } from "@/types";
 
-const Navbar: React.FC<NavbarProps> = ({ isLoggedIn }) => {
+const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: initialLoggedIn }) => {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(initialLoggedIn);
   const [showNavbar, setShowNavbar] = useState<boolean>(true);
   const [scrollPos, setScrollPos] = useState<number>(0);
   const [isScrollingUp, setIsScrollingUp] = useState<boolean>(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const pathname: string | null = usePathname();
   const router = useRouter();
+
+  useEffect(() => {
+    // Listen for `jwt` changes in localStorage to update `isLoggedIn` status
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === 'jwt-changed') {
+        const jwt = Cookies.get('jwt');
+        setIsLoggedIn(!!jwt);
+
+        // Remove `jwt-changed` from localStorage after 1 second
+        setTimeout(() => {
+          localStorage.removeItem('jwt-changed');
+        }, 1000);
+      }
+    };
+
+    window.addEventListener('storage', handleStorage);
+
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+    };
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -34,6 +57,8 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn }) => {
         ? "text-gray-800"
         : "text-white"
       : "text-black";
+
+  const fixed_status: string = pathname == "/" ? "fixed" : "";
 
   const smoothScrollTo = (targetY: number, duration: number) => {
     const startY = window.pageYOffset;
@@ -59,25 +84,63 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn }) => {
 
   const handlePlanesClick: HandlePlanesClick = (e) => {
     e.preventDefault();
+  
     if (pathname === "/") {
       const pricingElement: HTMLElement | null = document.getElementById("pricing");
       if (pricingElement) {
-        const targetY = pricingElement.getBoundingClientRect().top + window.pageYOffset;
+        const targetY = pricingElement.offsetTop;
         smoothScrollTo(targetY, 1000);
       }
     } else {
       router.push("/#pricing");
     }
-    setIsMobileMenuOpen(false); // Close mobile menu on click
+  
+    setIsMobileMenuOpen(false); // Close mobile menu
   };
+  
+  const handleFAQClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+  
+    if (pathname === "/") {
+      const faqElement: HTMLElement | null = document.getElementById("faq");
+      if (faqElement) {
+        const targetY = faqElement.offsetTop;
+        smoothScrollTo(targetY, 1000);
+      }
+    } else {
+      router.push("/#faq");
+    }
+  
+    setIsMobileMenuOpen(false); // Close mobile menu
+  };
+  
+  useEffect(() => {
+    if (pathname === "/") {
+      const targetHash = window.location.hash;
+  
+      if (targetHash === "#pricing") {
+        const pricingElement: HTMLElement | null = document.getElementById("pricing");
+        if (pricingElement) {
+          const targetY = pricingElement.offsetTop;
+          smoothScrollTo(targetY, 1000);
+        }
+      } else if (targetHash === "#faq") {
+        const faqElement: HTMLElement | null = document.getElementById("faq");
+        if (faqElement) {
+          const targetY = faqElement.offsetTop;
+          smoothScrollTo(targetY, 1000);
+        }
+      }
+    }
+  }, [pathname]);
+  
+  
 
   return (
     <nav
-      className={`${
-        showNavbar ? "top-0" : "-top-20"
-      } py-2 fixed w-full z-20 p-4 transition-all duration-300 ${
-        isScrollingUp ? "bg-white opacity-70 shadow-md" : "bg-transparent"
-      }`}
+      className={`${showNavbar ? "top-0" : "-top-20"
+        } py-2 ${fixed_status} w-full z-20 p-4 transition-all duration-300 ${isScrollingUp ? "bg-white opacity-70 shadow-md" : "bg-transparent"
+        }`}
     >
       <div className="container mx-auto flex justify-between items-center relative">
         {/* Logo */}
@@ -101,6 +164,13 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn }) => {
           >
             Planes
           </a>
+          <a
+            href="/#faq"
+            onClick={handleFAQClick}
+            className="link-button hover:font-bold py-2 cursor-pointer"
+          >
+            Preguntas frecuentes
+          </a>
           <Link className="link-button hover:font-bold py-2" href="/proveedores">
             Proveedores
           </Link>
@@ -115,16 +185,12 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn }) => {
           <div className="flex space-x-6 items-center">
             {isLoggedIn ? (
               <>
-                {/* Profile Link with SVG */}
                 <Link href="/profile" className="flex items-center">
                   <Image
                     src="/icons/profile.svg"
                     width={48}
                     height={48}
                     alt="Profile Icon"
-                    className={`${
-                      textColor === "text-gray-800" ? "fill-gray-800" : "fill-white"
-                    }`}
                   />
                 </Link>
                 <LogoutButton />
@@ -143,9 +209,15 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn }) => {
         <div className="md:hidden">
           <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
             <svg
-              className="w-6 h-6"
+              className="w-10 h-10"
               fill="none"
-              stroke={isScrollingUp ? "black" : "white"}
+              stroke={
+                pathname === "/"
+                  ? isScrollingUp
+                    ? "black"
+                    : "white"
+                  : "black"
+              }
               viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -162,9 +234,8 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn }) => {
 
       {/* Mobile Navigation Links */}
       <div
-        className={`fixed inset-0 bg-white z-30 flex flex-col items-start p-6 overflow-y-auto transition-transform duration-300 transform ${
-          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed inset-0 bg-white z- flex flex-col items-start p-6 overflow-y-auto transition-transform duration-300 transform ${isMobileMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-full'
+          }`}
       >
         {/* Close Button */}
         <button
@@ -193,6 +264,13 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn }) => {
           className="link-button hover:font-bold py-2 cursor-pointer w-full text-left"
         >
           Planes
+        </a>
+        <a
+          href="/#faq"
+          onClick={handleFAQClick}
+          className="link-button hover:font-bold py-2 cursor-pointer w-full text-left"
+        >
+          Preguntas frecuentes
         </a>
         <Link
           className="link-button hover:font-bold py-2 w-full text-left"

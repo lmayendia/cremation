@@ -8,13 +8,20 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      keyframes: {
+        'stain-move': {
+          '0%': { transform: 'translate(0px, 0px) scale(1)' },
+          '50%': { transform: 'translate(15px, 10px) scale(1.05)' },
+          '100%': { transform: 'translate(-10px, -15px) scale(0.95)' },
+        },
+      },
       colors: {
         primary: {
           100: "#CCE4FF", // Lightest variant
           200: "#99C9FF",
           300: "#66AFFF",
           400: "#3394FF", // Lighter variant
-          500: "#1E90FF", // Main primary color
+          500: "#135CB3", // Main primary color           500: "#1E90FF", // Main primary color
           600: "#1A82E6",
           700: "#176FCC",
           800: "#135CB3",

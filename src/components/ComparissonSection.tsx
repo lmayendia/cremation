@@ -10,8 +10,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
-import Cookies from 'js-cookie'; // For reading cookies
-import { ChartData, UseInViewReturn } from '@/types'; // Import your types
+import { ChartData, ComparisonSectionProps, UseInViewReturn } from '@/types'; // Import your types
 
 // Function to observe when elements enter and exit the viewport
 const useInView = (threshold: number = 0.6): UseInViewReturn => {
@@ -39,44 +38,16 @@ const useInView = (threshold: number = 0.6): UseInViewReturn => {
   return [isInView, ref] as const;
 };
 
-const ComparisonSection = () => {
+const ComparisonSection: React.FC<ComparisonSectionProps> = ({ full_price, discount_price, subscription_price, currency }) => {
   const [isInView1, ref1] = useInView(0.2);
   const [isInView2, ref2] = useInView(0.3);
   const [isInView3, ref3] = useInView(0.4);
-  
-  // Read user-country cookie
-  const [country, setCountry] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Log all cookies
-    console.log("All cookies:", document.cookie);
-  
-    const userCountry = Cookies.get('user-country');
-    console.log("user-country cookie:", userCountry);
-  
-    if (userCountry) {
-      setCountry(userCountry);
-    }
-  }, []);
-  
-
-  // Define costs for each country
-  const countryCosts: { [key: string]: { full_price: number, discount_price: number } } = {
-    US: { full_price: 1995, discount_price: 1496 },
-    PR: { full_price: 1396, discount_price: 995 },
-    CO: { full_price: 1995, discount_price: 1496 },
-  };
-
-
-  // Determine the cost based on the country, default to PR if country is not found
-  const cremationCost = country ? countryCosts[country] || countryCosts['PR'] : countryCosts['PR'];
 
   // Data for the bar chart
   const data: ChartData[] = [
-    { name: "Cremación", Costo: cremationCost.full_price },
+    { name: "Cremación", Costo: full_price },
     { name: "Entierro", Costo: 9995 },
   ];
-
 
   return (
     <div className="md:space-y-36 mb-32">
@@ -97,7 +68,7 @@ const ComparisonSection = () => {
               De acuerdo con la <a className="italic" href="https://nfda.org">NFDA</a>, el costo promedio de un entierro tradicional ronda los <strong>$9,995</strong>. A esto se suman los costos de adquirir una parcela, la lápida, las flores y otros gastos administrativos, lo que puede <strong>aumentar considerablemente</strong> el total.
             </p>
             <p className="mt-4 text-lg md:text-2xl text-white mb-12">
-              En <strong>Cremación Directa</strong>, te ofrecemos un plan completo de cremación por solo <strong className="font-extrabold">${cremationCost.full_price}</strong> o por <strong>${cremationCost.discount_price}</strong> en un solo pago, que incluye:
+              En <strong>Cremación Directa</strong>, te ofrecemos un plan completo de cremación por solo <strong>${discount_price}</strong> o por <strong className="font-extrabold">${full_price}</strong> en un solo pago, que incluye:
             </p>
 
             <div className="grid grid-cols-2 gap-4 md:mt-6">
@@ -105,7 +76,9 @@ const ComparisonSection = () => {
                 <ul className="space-y-5">
                   <li className="flex items-start">
                     <Image src="/icons/check.svg" alt="check icon" width={24} height={24} />
-                    <p className="md:text-xl text-white ml-2">Recogido y traslado. <span className="italic"> <br />De ser nesecario se llevara Instituto de Ciencias Forenses.</span></p>
+                    <p className="md:text-xl text-white ml-2">
+                      Recogido y traslado. <span className="italic"><br />De ser necesario se llevará al Instituto de Ciencias Forenses.</span>
+                    </p>
                   </li>
                   <li className="flex items-start">
                     <Image src="/icons/check.svg" alt="check icon" width={24} height={24} />
@@ -137,19 +110,19 @@ const ComparisonSection = () => {
           </div>
           {/* Right Side: Prices and Chart */}
           <div className="text-center my-8">
-            <p className="md:text-xl text-xl text-white line-through"> $9,995 </p>
-            <p className="text-7xl text-primary-100 font-bold mt-2"> ${cremationCost.full_price} </p>
-            <div className="w-full mx-auto mt-24 md:mt-8 md:px-12">
+            <p className="md:text-xl text-xl text-white line-through">$9,995</p>
+            <p className="text-7xl text-primary-100 font-bold mt-2">${full_price}</p>
+            <div className="w-full mx-auto mt-12 md:mt-8 md:px-12">
+              <h1 className="text-2xl mb-12 text-white">Comparación entre precios de entierro y cremación</h1>
               <ResponsiveContainer width="100%" height={350}>
-                <BarChart data={data} layout="vertical">
-                  <XAxis type="number" tick={{ fill: 'white', fontSize: 14 }} />
-                  <YAxis
-                    dataKey="name"
-                    type="category"
-                    width={100}
-                    tick={{ fill: 'white', fontSize: 14 }}
-                  />
-                  <Tooltip contentStyle={{ backgroundColor: '#33C2DB', opacity: 0.7 }} />
+                <BarChart data={data} layout="horizontal">
+                  {/* X-Axis */}
+                  <XAxis dataKey="name" type="category" tick={{ fill: 'white', fontSize: 14 }} />
+                  {/* Y-Axis */}
+                  <YAxis type="number" tick={{ fill: 'white', fontSize: 14 }} />
+                  {/* Tooltip */}
+                  <Tooltip contentStyle={{ backgroundColor: '#33C2DB', opacity: 0.9 }} cursor={{ 'fill': 'transparent' }} />
+                  {/* Bars */}
                   <Bar dataKey="Costo" barSize={50}>
                     {data.map((entry, index) => (
                       <Cell
@@ -162,6 +135,7 @@ const ComparisonSection = () => {
               </ResponsiveContainer>
             </div>
           </div>
+
         </div>
       </section>
 
@@ -172,12 +146,12 @@ const ComparisonSection = () => {
           }`}
       >
         <div className="container mx-auto h-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center overflow-hidden">
-        {/* Left Side: Image */}
+          {/* Left Side: Image */}
           <div className="relative w-full md:h-5/6 rounded-xl overflow-hidden h-[350px]">
             <Image
-              src="/images/woman-old.jpeg"
+              src="/images/family-happy.jpg"
               alt="Cremation Service"
-              className="object-cover w-full h-full "
+              className="object-cover"
               fill
             />
           </div>
@@ -222,11 +196,10 @@ const ComparisonSection = () => {
               </div>
             </div>
             <div className="md:py-16 pt-16">
-            <a href="#pricing">
-
-              <button className="border-0 rounded-lg md:text-xl bg-primary-700 text-white font-bold inline-block px-6 py-3 transition delay-100 transform hover:scale-105">
-                SUSCRIBETE AHORA
-              </button>
+              <a href="#pricing">
+                <button className="border-0 rounded-lg md:text-xl bg-primary-700 text-white font-bold inline-block px-6 py-3 transition delay-100 transform hover:scale-105">
+                  SUSCRIBETE AHORA
+                </button>
               </a>
             </div>
           </div>
@@ -241,7 +214,7 @@ const ComparisonSection = () => {
       >
         <div className="container mx-auto h-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center overflow-hidden">
           {/* Left Side: Content with 2x2 Grid */}
-          
+
           {/* Right Side: Image */}
           <div className="relative md:w-full md:h-full rounded-xl overflow-hidden group md:hidden block h-[400px] mt-6 md:mt-09">
             <Image
@@ -275,7 +248,7 @@ const ComparisonSection = () => {
               </div>
               <div>
                 <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
-                  $19.95 💸
+                  {currency === 'USD' ? '$' : currency} {subscription_price} 💸
                 </h3>
                 <p className="text-lg text-gray-600">
                   Comienza con pagos mensuales accesibles, brindando tranquilidad con un plan completo.
@@ -291,10 +264,10 @@ const ComparisonSection = () => {
               </div>
             </div>
             <div className="md:py-16 pt-16">
-            <a href="#pricing">
-              <button className="border-0 rounded-lg md:text-xl bg-primary-700 text-white font-bold inline-block px-6 py-3 transition delay-100 transform hover:scale-105">
-                SUSCRIBETE AHORA
-              </button>
+              <a href="#pricing">
+                <button className="border-0 rounded-lg md:text-xl bg-primary-700 text-white font-bold inline-block px-6 py-3 transition delay-100 transform hover:scale-105">
+                  SUSCRIBETE AHORA
+                </button>
               </a>
             </div>
           </div>
@@ -302,7 +275,7 @@ const ComparisonSection = () => {
           {/* Right Side: Image */}
           <div className="relative w-full h-5/6 rounded-xl overflow-hidden md:block hidden">
             <Image
-              src="/images/holding-hand.jpg"
+              src="/images/daughter-with-parents.jpg"
               alt="Funeral Service"
               className="object-cover w-full h-full"
               fill

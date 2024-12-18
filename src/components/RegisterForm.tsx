@@ -1,45 +1,56 @@
 // components/RegisterForm.tsx
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { handleRegister } from '@/lib/handle-register';
-import { RegisterFormData, RegisterFormErrors } from '@/types'; // Ensure you have RegisterFormErrors type
+import { RegisterFormData, RegisterFormErrors } from '@/types';
 import { useRouter } from 'next/navigation';
 
 const RegisterForm: React.FC = () => {
-  // State variables for form inputs
   const [formData, setFormData] = useState<RegisterFormData>({
     email: '',
-    username: '',
+    firstName: '',
+    lastName: '',
     password: '',
     confirmPassword: '',
   });
 
-  // State for error messages per field
   const [errors, setErrors] = useState<RegisterFormErrors>({});
-
-  // State for loading
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
   const router = useRouter();
 
-  // Function to handle form submission
+  useEffect(() => {
+    const checkAuth = async () => {
+      const res = await fetch('/api/check-auth');
+      const data = await res.json();
+
+      if (data.authenticated) {
+        router.push('/profile');
+      }
+    };
+
+    checkAuth();
+  }, [router]);
+
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    // Reset errors
     setErrors({});
 
     const newErrors: RegisterFormErrors = {};
-
-    // Email validation using regex
     const emailRegex = /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/;
+
+    // Email validation
     if (!emailRegex.test(formData.email)) {
       newErrors.email = 'Por favor, introduce un correo electrónico válido.';
     }
 
-    // Username validation
-    if (!formData.username || formData.username.trim() === '') {
-      newErrors.username = 'El nombre de usuario es requerido.';
+    // First Name validation
+    if (!formData.firstName || formData.firstName.trim() === '') {
+      newErrors.firstName = 'El nombre es requerido.';
+    }
+
+    // Last Name validation
+    if (!formData.lastName || formData.lastName.trim() === '') {
+      newErrors.lastName = 'El apellido es requerido.';
     }
 
     // Password length validation
@@ -52,49 +63,79 @@ const RegisterForm: React.FC = () => {
       newErrors.confirmPassword = 'Las contraseñas no coinciden.';
     }
 
-    // If there are errors, set them and return
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
-    setIsLoading(true); // Start loading
+    setIsLoading(true);
 
     try {
       await handleRegister(formData);
-      // Registration successful
-      alert('Registro exitoso. Por favor, inicia sesión.');
-      router.push('/sign-in'); // Redirect to sign-in after success
+      localStorage.setItem('jwt-changed', Date.now().toString()); // Unique value
+      router.push('/profile');
     } catch (err: unknown) {
-      // Safely handle errors using type checks
       if (typeof err === 'object' && err !== null && 'general' in err) {
-        setErrors(err as RegisterFormErrors); // Assuming errors is of type RegisterFormErrors
+        setErrors(err as RegisterFormErrors);
       } else {
         setErrors({ general: 'Error de registro.' });
       }
     } finally {
-      setIsLoading(false); // End loading
+      setIsLoading(false);
     }
   };
 
-  // Function to handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   return (
-    <div className="flex flex-col lg:flex-row justify-center items-stretch min-h-full bg-gray-100 shadow-xl">
+    <div className="flex flex-col lg:flex-row justify-center items-stretch shadow-xl">
       {/* Left side (Sign Up Form) */}
-      <div className="w-full lg:w-1/2 p-8 lg:p-16 bg-white rounded-l-md lg:rounded-r-none">
+      <div className="w-full lg:w-1/2 p-8 lg:p-16 bg-white rounded-t-md lg:rounded-tr-none lg:rounded-l-md">
         <h2 className="text-3xl font-semibold mb-6 text-center">Registrarse</h2>
-
         <form onSubmit={onSubmit}>
-          {/* Display general error message if any */}
           {errors.general && (
             <p className="text-red-500 text-center mb-4">{errors.general}</p>
           )}
+          {/* First Name Field */}
+          <div className='lg:flex gap-x-4'>
+            <div className="mb-4 lg:w-1/2">
+              <label className="block text-gray-700 mb-2">Nombre</label>
+              <input
+                type="text"
+                name="firstName"
+                placeholder="Nombre"
+                value={formData.firstName}
+                onChange={handleChange}
+                required
+                className={`w-full p-3 border ${
+                  errors.firstName ? 'border-red-500' : 'border-gray-300'
+                } rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500`}
+              />
+              {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
+            </div>
 
-          {/* Correo electrónico */}
+            {/* Last Name Field */}
+            <div className="mb-4 lg:w-1/2">
+              <label className="block text-gray-700 mb-2">Apellido</label>
+              <input
+                type="text"
+                name="lastName"
+                placeholder="Apellido"
+                value={formData.lastName}
+                onChange={handleChange}
+                required
+                className={`w-full p-3 border ${
+                  errors.lastName ? 'border-red-500' : 'border-gray-300'
+                } rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500`}
+              />
+              {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
+            </div>
+
+          </div>
+
+          {/* Email Field */}
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">Correo electrónico</label>
             <input
@@ -108,31 +149,11 @@ const RegisterForm: React.FC = () => {
                 errors.email ? 'border-red-500' : 'border-gray-300'
               } rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500`}
             />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-            )}
+            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
           </div>
 
-          {/* Nombre de usuario */}
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-2">Nombre de usuario</label>
-            <input
-              type="text"
-              name="username"
-              placeholder="Nombre de usuario"
-              value={formData.username}
-              onChange={handleChange}
-              required
-              className={`w-full p-3 border ${
-                errors.username ? 'border-red-500' : 'border-gray-300'
-              } rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500`}
-            />
-            {errors.username && (
-              <p className="text-red-500 text-sm mt-1">{errors.username}</p>
-            )}
-          </div>
 
-          {/* Contraseña */}
+          {/* Password Field */}
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">Contraseña</label>
             <input
@@ -146,12 +167,10 @@ const RegisterForm: React.FC = () => {
                 errors.password ? 'border-red-500' : 'border-gray-300'
               } rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500`}
             />
-            {errors.password && (
-              <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-            )}
+            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
           </div>
 
-          {/* Confirmar contraseña */}
+          {/* Confirm Password Field */}
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">Confirmar contraseña</label>
             <input
@@ -165,12 +184,9 @@ const RegisterForm: React.FC = () => {
                 errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
               } rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500`}
             />
-            {errors.confirmPassword && (
-              <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
-            )}
+            {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
           </div>
 
-          {/* Sign Up Button */}
           <button
             type="submit"
             disabled={isLoading}
@@ -180,7 +196,6 @@ const RegisterForm: React.FC = () => {
             {isLoading ? 'Registrando...' : 'Registrarse'}
           </button>
 
-          {/* Responsive: Sign In Button */}
           <a
             href="/sign-in"
             className="block text-center w-full mt-4 bg-gray-200 text-primary-500 py-3 rounded-md hover:bg-gray-300 transition duration-200 lg:hidden">
@@ -190,7 +205,7 @@ const RegisterForm: React.FC = () => {
       </div>
 
       {/* Right side for larger screens */}
-      <div className="hidden lg:flex w-1/2 p-8 bg-gradient-to-br from-primary-300 to-primary-500 text-white items-center justify-center rounded-r-md lg:rounded-l-none shadow-lg">
+      <div className="hidden lg:flex w-full lg:w-1/2 p-8 bg-gradient-to-br from-primary-300 to-primary-500 text-white items-center justify-center rounded-b-md lg:rounded-none lg:rounded-r-md">
         <div className="text-center">
           <h2 className="text-4xl font-semibold">Bienvenido a Cremación Directa</h2>
           <p className="mt-4 text-lg">¿Ya tienes una cuenta?</p>

@@ -39,9 +39,8 @@ const PlanningSection = () => {
               src="/images/quotes.png"
               alt="Opening Quote"
               fill
-              className="w-2 h-2"
-              objectFit="contain"
-            />
+              className="w-2 h-2 object-contain"
+              />
           </div>
 
           {/* Heading Text */}
@@ -55,7 +54,7 @@ const PlanningSection = () => {
               src="/images/quotes.png"
               alt="Closing Quote"
               fill
-              objectFit="contain"
+              className="object-contain"
             />
           </div>
         </div>
@@ -69,7 +68,7 @@ const PlanningSection = () => {
       </div>
 
       {/* Shield Image with Grow Effect */}
-      <div className="absolute md:block hidden bottom-10 right-96 w-24 h-24 md:w-32 md:h-32 transition-transform transform hover:scale-110 duration-300">
+      <div className="absolute lg:block hidden bottom-10 right-24 w-24 h-24 md:w-32 md:h-32 transition-transform transform hover:scale-110 duration-300">
         <Image
           src="/images/shield.png" // Path to the shield image
           alt="Shield"
@@ -80,7 +79,7 @@ const PlanningSection = () => {
 
       {/* Absolute Positioned Arrows */}
       <div
-        className={`absolute md:block hidden left-0 top-1/2 transform transition-transform duration-700 ease-in-out ${
+        className={`absolute lg:block hidden left-0 top-1/2 transform transition-transform duration-700 ease-in-out ${
           isVisible
             ? "-translate-y-3/4 -translate-x-3"
             : "-translate-y-1/2 -translate-x-full"
@@ -89,13 +88,13 @@ const PlanningSection = () => {
         <Image
           src="/images/left-arrow.svg"
           alt="Left Arrow"
-          width={350}
-          height={350}
+          width={250}
+          height={250}
         />
       </div>
 
       <div
-        className={`absolute md:block hidden right-0 top-1/2 transform transition-transform duration-1000 ease-in-out ${
+        className={`absolute lg:block hidden right-0 top-1/2 transform transition-transform duration-1000 ease-in-out ${
           isVisible
             ? "translate-y-5 translate-x-3"
             : "-translate-y-1/2 translate-x-full"
@@ -104,8 +103,9 @@ const PlanningSection = () => {
         <Image
           src="/images/right-arrow.svg"
           alt="Right Arrow"
-          width={400}
-          height={400}
+          width={250}
+          height={250}
+          
         />
       </div>
     </section>

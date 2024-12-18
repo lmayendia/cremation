@@ -14,30 +14,47 @@ export interface ChartData {
 // Define the return type for the useInView hook
 export type UseInViewReturn = readonly [boolean, React.RefObject<HTMLElement>];
 
-// Define types
+// src/types/index.ts
+
 export type PricingPlanThree = {
   name: string;
-  price: string;
-  period: string; // Added period property
-  total: string;
+  price: number;
+  period: number; // Changed from string to number
+  total: number;
   description: string;
-  link:string;
+  link: string;
+  currency: string;
 };
 
 export type PricingPlanTwo = {
   name: string;
-  price: string;
-  discountPrice: string;
-  savings: string; 
+  price: number;
+  discountPrice: number;
+  savings: number;
   description: string;
-  link:string;
+  link: string;
+  currency: string;
 };
 
+export interface Plan {
+  name: string;
+  price: number;
+  description: string;
+  link: string;
+  currency: string;
+  period?: number;
+  total?: number;
+  discountPrice?: number;
+  savings?: number; 
+}
+
+// Type Guard to differentiate between PricingPlanTwo and PricingPlanThree
 export const isPricingPlanThree = (
-  plan: PricingPlanThree | PricingPlanTwo
+  plan: Plan
 ): plan is PricingPlanThree => {
-  return (plan as PricingPlanThree).period !== undefined;
+  return plan.total !== null;
 };
+
 
 export type Image = {
   id: number;
@@ -60,6 +77,14 @@ export type Urna = {
   url: string;
 };
 
+// Define the props interface
+export interface ComparisonSectionProps {
+  full_price: number;
+  discount_price: number;
+  subscription_price: number;
+  currency: string;
+}
+
 export type Pagination = {
   page: number;
   pageSize: number;
@@ -74,6 +99,7 @@ export type UrnasResponse = {
   };
 };
 
+
 export type ProductCardProps = {
   name: string;
   description: string;
@@ -85,10 +111,21 @@ export type ProductCardProps = {
 
 export interface RegisterFormData {
   email: string;
-  username: string;
+  firstName: string;
+  lastName: string;
   password: string;
   confirmPassword: string;
 }
+
+export interface RegisterFormErrors {
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  password?: string;
+  confirmPassword?: string;
+  general?: string;
+}
+
 
 export interface StrapiErrorDetails {
   [key: string]: string | number | boolean | object | null;
@@ -132,19 +169,21 @@ export interface AuthError {
   };
 }
 
-// Define types for the request and response
 export interface User {
-  id: number;
-  documentId: string;
-  username: string;
+  id?: number;
+  documentId?: string;
+  username?: string;
   email: string;
-  provider: string;
-  confirmed: boolean;
-  blocked: boolean;
-  createdAt: string;
-  updatedAt: string;
-  publishedAt: string;
-  locale: string | null;
+  provider?: string;
+  confirmed?: boolean;
+  blocked?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+  publishedAt?: string;
+  stripe_customer?: StripeCustomer;
+  nombre: string;
+  subscriptions: SubscriptionData[];
+  locale?: string | null;
 }
 
 export interface ErrorResponse {
@@ -170,7 +209,7 @@ export interface RegistrationResponse {
 }
 
 export interface UserProfileResponse {
-  data: User | null;
+  data: User | FilteredUserData |null;
   error: string | null;
 }
 
@@ -185,4 +224,87 @@ export interface FrontendError {
 
 export interface NavbarProps {
   isLoggedIn: boolean;
+}
+
+export type PricingData = {
+  pricingPlansThree: PricingPlanThree[];
+  pricingPlansTwo: PricingPlanTwo[];
+};
+
+export type Review = {
+  name: string;
+  location: boolean;
+  testimonial: number;
+  img: Image;
+};
+
+export type ReviewsResponse = {
+  data: Review[];
+  meta: {
+    pagination: Pagination;
+  };
+};
+
+export interface StripeCustomer {
+  id: number;
+  stripe_customer_id: string;
+}
+
+export interface CreateCheckoutSessionRequestBody {
+  priceId: string;
+}
+
+export interface CreateCheckoutSessionResponse {
+  client_secret: string;
+}
+
+export interface CreateCheckoutSessionErrorResponse {
+  data: null;
+  error: string;
+}
+
+export interface CheckoutSession {
+  id: string;
+  object: string;
+  status: string | null;
+  customer: string;
+  customer_email: string;
+  subscription: string;
+}
+
+
+export interface SubscriptionData {
+  plan_name: string;
+  amount_of_cycles: number;
+  amount_paid_cycles: number;
+  amount_paid: number;
+  total_amount_to_pay: number;
+  amount_due: number;
+  starting_date: string;
+  next_payment_date: string;
+  monthly_payment: number;
+  session_id: string;
+  users_permissions_user: number;
+  stripe_customer: number;
+}
+
+
+
+export interface FilteredUserData {
+  nombre: string;
+  email: string;
+  subscriptions: SubscriptionData[];
+}
+
+export interface PopupProps {
+  full_price: number;
+  discount_price: number;
+  subscription_price: number;
+  currency: string;
+}
+
+export interface FormData {
+  userEmail: string;
+  subject: string;
+  message: string;
 }

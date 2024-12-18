@@ -2,17 +2,22 @@
 interface PinProps {
     x: number;
     y: number;
+    id: string;
     isHovered: boolean;
+    onHover: (id: string) => void; // Callback to set hovered region
+
 }
 
 // Pin component with dynamic color change based on hover state
-const Pin = ({ x, y, isHovered }: PinProps) => (
+const Pin = ({ x, y, id, isHovered, onHover }: PinProps) => (
     <svg
         xmlns="http://www.w3.org/2000/svg"
         className="transform transition-colors duration-200"
         viewBox="0 -0.5 17 17"
         x={x}
         y={y}
+        onMouseEnter={() => onHover(id)} // Trigger on hover
+        onMouseLeave={() => onHover("")} // Clear hover on leave
         width={14}
     >
         <g

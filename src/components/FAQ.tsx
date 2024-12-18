@@ -38,7 +38,7 @@ const FAQComponent: React.FC = () => {
   };
 
   return (
-    <section className="py-10 bg-primary-500">
+    <section className="py-10 bg-primary-500" id='faq'>
       <div className="text-center md:my-24 md:p-0 my-12 p-6">
         <h4 className="text-primary-100 md:text-2xl mb-2">¿Tienes preguntas?</h4>
         <h2 className="text-white md:text-6xl text-5xl uppercase font-bold">Preguntas frecuentes</h2>

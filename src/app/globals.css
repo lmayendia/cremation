@@ -148,5 +148,30 @@
   background: linear-gradient(to bottom, #1e90ff 70%, white 100%);
 }
 .bg-secondary-gradient {
-  background: linear-gradient(139deg, rgba(30,144,255,1) 0%, rgba(51,148,255,1) 35%, rgba(102,175,255,1) 66%, rgba(204,228,255,1) 100%);
+  background: linear-gradient(139deg, #135CB3 0%, #1F6DC9 35%, #3A89E3 66%, #8BB4F2 100%);
+}
+
+
+.fade-in {
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+}
+.fade-in-active {
+  opacity: 1;
+}
+.cards-container {
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+.cards-container.fadeOut {
+  opacity: 0;
+  transform: scale(0.95);
+}
+.cards-container.fadeIn {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.text-8xl {
+  font-size: 9rem;
+  line-height: 1;
 }

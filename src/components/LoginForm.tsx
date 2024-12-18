@@ -1,20 +1,28 @@
-'use client';
-
+// components/LoginForm.tsx
+"use client";
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
-const LoginForm = () => {
+const LoginForm: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get('redirect') || '/profile';
+
+  const sanitizeInput = (input: string) => input.trim();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+
+    // Sanitize inputs
+    const sanitizedUsername = sanitizeInput(username);
+    const sanitizedPassword = sanitizeInput(password);
 
     try {
       const res = await fetch('/api/login', {
@@ -23,8 +31,8 @@ const LoginForm = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          identifier: username, // Strapi requires 'identifier' instead of 'username'
-          password,
+          identifier: sanitizedUsername,
+          password: sanitizedPassword,
         }),
       });
 
@@ -34,8 +42,8 @@ const LoginForm = () => {
         throw new Error(data?.message || 'Error during login.');
       }
 
-      // If login is successful, redirect to profile or home page
-      router.push('/profile');
+      // Redirect to the provided redirect URL or to /profile by default
+      router.push(redirectUrl);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message || 'Something went wrong.');
@@ -48,33 +56,33 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row justify-center items-stretch min-h-full bg-gray-100 shadow-xl">
+    <div className="flex flex-col lg:flex-row justify-center items-stretch shadow-xl">
       {/* Left side (Sign In Form) */}
-      <div className="w-full lg:w-1/2 p-8 lg:p-16 bg-white rounded-l-md lg:rounded-r-none">
+      <div className="w-full lg:w-1/2 p-6 md:p-12 lg:p-16 bg-white rounded-t-md lg:rounded-tr-none lg:rounded-l-md">
         <h2 className="text-3xl font-semibold mb-6 text-center">Iniciar sesión</h2>
 
         <form onSubmit={handleLogin}>
-          {/* Usuario */}
+          {/* Username Field */}
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">Usuario</label>
             <input
               type="text"
               placeholder="Usuario"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => setUsername(sanitizeInput(e.target.value))}
               required
               className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
           </div>
 
-          {/* Contraseña */}
+          {/* Password Field */}
           <div className="mb-4">
             <label className="block text-gray-700 mb-2">Contraseña</label>
             <input
               type="password"
               placeholder="Contraseña"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => setPassword(sanitizeInput(e.target.value))}
               required
               className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
@@ -109,6 +117,7 @@ const LoginForm = () => {
           {/* Responsive: Sign Up Button */}
           <button
             type="button"
+            onClick={() => router.push('/sign-up')}
             className="w-full mt-4 bg-gray-200 text-primary-500 py-3 rounded-md hover:bg-gray-300 transition duration-200 lg:hidden">
             Registrarse
           </button>
@@ -116,7 +125,7 @@ const LoginForm = () => {
       </div>
 
       {/* Right side for larger screens */}
-      <div className="hidden lg:flex w-1/2 p-8 bg-gradient-to-br from-primary-300 to-primary-500 text-white items-center justify-center rounded-r-md lg:rounded-l-none shadow-lg">
+      <div className="hidden lg:flex w-full lg:w-1/2 p-8 bg-gradient-to-br from-primary-300 to-primary-500 text-white items-center justify-center rounded-b-md lg:rounded-none lg:rounded-r-md shadow-lg">
         <div className="text-center">
           <h2 className="text-4xl font-semibold">Bienvenido a Cremación Directa</h2>
           <p className="mt-4 text-lg">¿No tienes una cuenta?</p>

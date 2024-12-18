@@ -2,7 +2,7 @@ import RegisterForm from "@/components/RegisterForm"
 
 export default function LoginPage(){
     return (
-        <div className="lg:p-52 md:p-40 p-20">
+        <div className="lg:p-32 md:p-32 px-20 py-32">
             <RegisterForm />
         </div>
     )
