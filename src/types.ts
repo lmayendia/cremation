@@ -272,29 +272,30 @@ export interface CheckoutSession {
   subscription: string;
 }
 
-
+// SubscriptionData is the transformed frontend data structure
 export interface SubscriptionData {
+  id: string;
   plan_name: string;
   amount_of_cycles: number;
   amount_paid_cycles: number;
-  amount_paid: number;
-  total_amount_to_pay: number;
-  amount_due: number;
+  amount_paid: number; // Converted to number
+  total_amount_to_pay: number; // Converted to number
+  amount_due: number; // Converted to number
   starting_date: string;
   next_payment_date: string;
-  monthly_payment: number;
+  monthly_payment: number; // Converted to number
   session_id: string;
   users_permissions_user: number;
   stripe_customer: number;
 }
 
-
-
+// FilteredUserData structure for frontend
 export interface FilteredUserData {
   nombre: string;
   email: string;
   subscriptions: SubscriptionData[];
 }
+
 
 export interface PopupProps {
   full_price: number;
