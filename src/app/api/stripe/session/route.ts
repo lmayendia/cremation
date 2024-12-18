@@ -110,6 +110,7 @@ export async function GET(request: Request): Promise<Response> {
     const nextPaymentDate = new Date(subscription.current_period_end * 1000);
 
     const subscriptionData: SubscriptionData = {
+      id: userId.toString(),
       plan_name: productName,
       amount_of_cycles: amountOfCycles,
       amount_paid_cycles: amountPaidCycles,
