@@ -61,7 +61,7 @@ const PlanningSection = () => {
 
         <p className="mt-6 text-lg md:text-2xl text-gray-600 max-w-3xl mx-auto">
           Descubre una nueva manera de planificar la vida eterna. Planes con{" "}
-          <span className="font-bold text-black">ZERO PRONTO</span> y cómodos{" "}
+          <span className="font-bold text-black">CERO PRONTO</span> y cómodos{" "}
           <span className="font-bold uppercase text-black">pagos mensuales</span> que se ajustan
           a tu presupuesto. <span className="uppercase font-bold text-black">Sin intereses</span>.
         </p>

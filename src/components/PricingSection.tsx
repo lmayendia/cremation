@@ -34,7 +34,7 @@ const PricingSection: React.FC<PricingSectionProps> = ({ plans }) => {
           period: plan.period || 0,
           total: plan.total || 995,
           description: plan.description,
-          link: `${process.env.NEXT_PUBLIC_BASE_URL}/subscription?priceId=${plan.link}`,
+          link: `${plan.link}`,
           currency: plan.currency,
         });
       } else {
@@ -44,7 +44,7 @@ const PricingSection: React.FC<PricingSectionProps> = ({ plans }) => {
           discountPrice: plan.discountPrice || 0,
           savings: plan.savings || 0,
           description: plan.description,
-          link: `${process.env.NEXT_PUBLIC_BASE_URL}/subscription?priceId=${plan.link}`,
+          link: `${plan.link}`,
           currency: plan.currency,
         });
       }
@@ -124,7 +124,7 @@ const PricingSection: React.FC<PricingSectionProps> = ({ plans }) => {
         >
           El presupuesto de cada familia es diferente. Es por eso que ofrecemos
           planes que se ajustan a todos los presupuestos. Tenemos planes con{" "}
-          <strong className="uppercase text-black">zero pronto</strong> y todos
+          <strong className="uppercase text-black">cero pronto</strong> y todos
           nuestros planes, una vez pagos en su totalidad, son{" "}
           <strong className="text-black">
             100% transferibles a cualquier persona designada por el contratante.

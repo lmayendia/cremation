@@ -37,24 +37,17 @@ export type PricingPlanTwo = {
 };
 
 export interface Plan {
+  id: number;
   name: string;
   price: number;
   description: string;
   link: string;
   currency: string;
-  period?: number;
-  total?: number;
-  discountPrice?: number;
-  savings?: number; 
+  isSubscription: boolean;
+  featured: boolean | null;
+  features: string[];
 }
-
 // Type Guard to differentiate between PricingPlanTwo and PricingPlanThree
-export const isPricingPlanThree = (
-  plan: Plan
-): plan is PricingPlanThree => {
-  return plan.total !== null;
-};
-
 
 export type Image = {
   id: number;
@@ -79,9 +72,8 @@ export type Urna = {
 
 // Define the props interface
 export interface ComparisonSectionProps {
-  full_price: number;
-  discount_price: number;
-  subscription_price: number;
+  oneTimePrice: number;
+  subscriptionPrice: number;
   currency: string;
 }
 
@@ -231,12 +223,17 @@ export type PricingData = {
   pricingPlansTwo: PricingPlanTwo[];
 };
 
-export type Review = {
+export interface Review {
+  id: number;
   name: string;
-  location: boolean;
-  testimonial: number;
-  img: Image;
-};
+  location: string;
+  testimonial: string;
+  img: {
+    id: number;
+    documentId: string;
+    url: string;
+  }[];
+}
 
 export type ReviewsResponse = {
   data: Review[];
@@ -309,3 +306,4 @@ export interface FormData {
   subject: string;
   message: string;
 }
+

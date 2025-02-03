@@ -54,13 +54,13 @@ const MapSvg = () => {
 
         switch (hoveredRegion) {
             case "US-FL":
-                return "Presencia en Miami Dade y Broward County";
+                return "Estamos en Miami Dade y Broward County";
             case "CO":
-                return "Presencia en Colombia";
+                return "Estamos en Colombia";
             case "PR":
-                return "Presencia en Puerto Rico";
+                return "Estamos en Puerto Rico";
             case "DO":
-                return "Presencia en \n Republica Dominicana";
+                return "Estamos en \n Republica Dominicana";
             default:
                 return "Pronto estaremos aquí";
         }
@@ -68,12 +68,11 @@ const MapSvg = () => {
     
 
     return (
-        <div className="relative w-96 h-96 md:w-full md:h-full -translate-x-2/3 md:-translate-x-52 lg:translate-x-0">
-            
+        <div className="relative w-96 h-96  -translate-x-2/3 md:-translate-x-52 lg:translate-x-0 z-30">
         {/* The dynamic hover text */}
             {hoveredRegion && (
-                <div className="absolute top-1/2 left-full lg:top-64 lg:right-28 md:top-2/4 md:right-0 md:max-w-52">
-                    <h2 className="uppercase md:text-sm lg:text-sm text-white font-bold translate-x-full">
+                <div className="absolute top-1/2 left-full translate-x-full md:top-2/4 md:right-0 md:translate-x-44 min-w-40">
+                    <h2 className="uppercase md:text-sm lg:text-sm text-white font-bold ">
                         {renderHoveredText()}
                     </h2>
                 </div>
