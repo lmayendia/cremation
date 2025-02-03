@@ -126,7 +126,7 @@ const Footer = () => {
             </Link>
           </div>
           <div className="flex justify-end w-full pe-6">
-          <Link className="hover:font-bold py-3" href="/proveedores">
+          <Link className="hover:font-bold py-3" href="/proveedores" >
             Conviertete en aliado
           </Link>
           </div>
