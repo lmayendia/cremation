@@ -12,7 +12,6 @@ const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 
 const NewSubscriptionPage: React.FC = () => {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
   
   const searchParams = useSearchParams();
   const priceId = searchParams.get('priceId');
@@ -21,7 +20,6 @@ const NewSubscriptionPage: React.FC = () => {
 
   const fetchClientSecret = useCallback(async () => {
     if (!priceId) {
-      setError('Price ID is required');
       return null;
     }
 
@@ -42,8 +40,8 @@ const NewSubscriptionPage: React.FC = () => {
       }
 
       if (!response.ok) {
-        const errorData = await response.json();
-        setError(errorData.error || 'An error occurred');
+        // Navigate to /sign-in if the response is not OK
+        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/sign-in`);
         return null;
       }
 
@@ -51,13 +49,15 @@ const NewSubscriptionPage: React.FC = () => {
       const { client_secret } = data;
 
       if (!client_secret) {
-        setError('Client secret is missing from the response');
+        // Navigate to /sign-in if client secret is missing
+        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/sign-in`);
         return null;
       }
 
       return client_secret;
     } catch (error) {
-      setError('Failed to fetch client secret');
+      // Navigate to /sign-in if an error occurs
+      router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/sign-in`);
       return null;
     }
   }, [priceId, pathname, searchParams, router]);
@@ -67,10 +67,6 @@ const NewSubscriptionPage: React.FC = () => {
     fetchClientSecret().then(secret => setClientSecret(secret));
   }, [fetchClientSecret]);
 
-  // If an error occurred, display it to the user
-  if (error) {
-    return <p className="text-red-500">{error}</p>;
-  }
 
   if (!priceId) {
     return <p>Error: Price ID is missing from the URL.</p>;
@@ -86,7 +82,9 @@ const NewSubscriptionPage: React.FC = () => {
           <EmbeddedCheckout />
         </EmbeddedCheckoutProvider>
       ) : (
-        <p>Loading checkout...</p> // Fallback while waiting for client secret
+      <div className="overlay">
+        <div className="loader"></div>
+      </div>
       )}
     </div>
   );
