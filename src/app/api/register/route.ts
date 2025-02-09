@@ -3,7 +3,7 @@ import { queryUser } from '@/lib/strapi';
 import { FailureResponse, User, RegistrationResponse } from '@/types';
 
 export async function POST(req: Request): Promise<Response> {
-  const { email, password, firstName, lastName } = await req.json();
+  const { email, password, firstName, lastName, birth_date } = await req.json();
 
   // Concatenate `firstName` and `lastName` to create `nombre`
   const nombre = `${firstName} ${lastName}`;
@@ -38,7 +38,7 @@ export async function POST(req: Request): Promise<Response> {
       return NextResponse.json(response, { status: 400 });
     }
 
-    // Register the new user without `nombre`
+    // Register the new user without `nombre` and `birth_date`
     const registrationData: RegistrationResponse = await queryUser<RegistrationResponse>(
       'auth/local/register',
       {
@@ -58,7 +58,7 @@ export async function POST(req: Request): Promise<Response> {
     const userId = registrationData.user?.id;
 
     if (userId) {
-      // Update the newly created user with `nombre`
+      // Update the newly created user with `nombre` and `birth_date`
       await queryUser(
         `users/${userId}`,
         {
@@ -68,7 +68,8 @@ export async function POST(req: Request): Promise<Response> {
             Authorization: `Bearer ${process.env.STRAPI_MASTER_KEY}`,
           },
           body: JSON.stringify({
-            nombre
+            nombre,
+            birth_date
           }),
         }
       );
@@ -94,10 +95,8 @@ export async function POST(req: Request): Promise<Response> {
 
     return response;
   } catch (error) {
-    // Error handling
     if (error instanceof Error) {
       console.error('Error during registration:', error.message);
-
       const response: FailureResponse = {
         data: null,
         error: {
@@ -109,8 +108,6 @@ export async function POST(req: Request): Promise<Response> {
       };
       return NextResponse.json(response, { status: 500 });
     }
-
-    // Fallback for non-standard errors
     return NextResponse.json(
       {
         data: null,

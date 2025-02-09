@@ -37,9 +37,8 @@ const LoginForm: React.FC = () => {
       });
 
       const data = await res.json();
-
       if (!res.ok) {
-        throw new Error(data?.message || 'Error during login.');
+        throw new Error(data?.error || 'Error during login.');
       }
 
       // Redirect to the provided redirect URL or to /profile by default
@@ -98,7 +97,7 @@ const LoginForm: React.FC = () => {
               />
               <label htmlFor="remember" className="text-gray-700">Recuérdame</label>
             </div>
-            <a href="#" className="text-primary-500 hover:underline">¿Olvidaste la contraseña?</a>
+            <a href="/reset-password" className="text-primary-500 hover:underline">¿Olvidaste la contraseña?</a>
           </div>
 
           {/* Display error message */}

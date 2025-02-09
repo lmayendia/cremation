@@ -16,22 +16,20 @@ export const handleRegister = async (
     const data: SuccessResponse<User> | FailureResponse = await res.json();
 
     // Check if there's an error
-    if ('error' in data && data.error) {
-      const errorMessage = data.error.message || 'Error de registro.';
-      throw { general: errorMessage };
+    if (data && data.error) {
+      const errorMessage = data.error.message;
+      throw errorMessage
     }
 
-    // Registration successful
-    console.log('Registro exitoso:', data);
 
   } catch (err) {
     // Error handling remains the same
     if (err instanceof Error) {
       console.error('Error during registration:', err.message);
-      throw { general: err.message };
+      throw { error: err };
     } else {
       console.error('Unknown error during registration:', err);
-      throw { general: 'Error de registro.' };
+      throw { error: err };
     }
   }
 };

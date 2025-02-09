@@ -38,7 +38,11 @@ const ProfilePage: React.FC = () => {
   }, []);
 
   if (isLoading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    return <div className="flex justify-center items-center h-screen">
+            <div className="overlay">
+        <div className="loader"></div>
+      </div>
+    </div>;
   }
 
   if (error) {

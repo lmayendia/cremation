@@ -19,11 +19,11 @@ export async function POST(req: Request) {
     });
 
     const data = await res.json();
-
     if (!res.ok) {
+      console.log(data)
       // Handle errors, e.g., invalid credentials
       return NextResponse.json(
-        { error: data.message || 'Login failed' },
+        { error: data.message || 'No se pudo iniciar sesion, verifica tus credenciales' },
         { status: res.status }
       );
     }
@@ -32,7 +32,7 @@ export async function POST(req: Request) {
     const { jwt } = data;
 
     // Create a response and set the JWT as an HTTP-only cookie
-    const response = NextResponse.json({ message: 'Login successful' });
+    const response = NextResponse.json({ message: 'Inicio de sesión exitoso' });
     response.cookies.set('jwt', jwt, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // Ensure cookies are only sent over HTTPS in production

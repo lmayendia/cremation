@@ -105,6 +105,7 @@ export interface RegisterFormData {
   email: string;
   firstName: string;
   lastName: string;
+  birth_date: string;
   password: string;
   confirmPassword: string;
 }
@@ -116,6 +117,7 @@ export interface RegisterFormErrors {
   password?: string;
   confirmPassword?: string;
   general?: string;
+  birth_date?: string;
 }
 
 

@@ -139,7 +139,7 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: initialLoggedIn }) => {
   return (
     <nav
       className={`${showNavbar ? "top-0" : "-top-20"
-        } py-2 ${fixed_status} w-full z-20 p-4 transition-all duration-300 ${isScrollingUp ? "bg-white shadow-md" : "bg-transparent"
+        } py-2 ${fixed_status} w-full z-50 p-4 transition-all duration-300 ${isScrollingUp ? "bg-white shadow-md" : "bg-transparent"
         }`}
     >
       <div className="container mx-auto flex justify-between items-center relative">
