@@ -2,55 +2,48 @@
 import React, { useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Plan } from '@/types';
 
 
-const PopUp: React.FC = () => {
-  const [timeLeft, setTimeLeft] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  });
+interface PopUpProps {
+  plan: Plan;
+}
+
+const defaultFeatures = [
+  "Cobertura continua durante el período de suscripción",
+  "Activación inmediata al suscribirse",
+  "Cancelación en cualquier momento",
+  "Recogido profesional",
+  "Traslado seguro*",
+  "Facilidades propias",
+  "Gestión de permisos",
+  "Cremación certificada",
+  "Urna estándar**",
+  "Certificados legales",
+  "Entrega personalizada",
+];
+
+const PopUp: React.FC<PopUpProps> = ({ plan }) => {
   const [isVisible, setIsVisible] = useState(false);
-
+  
   useEffect(() => {
-    if (!Cookies.get('popupHidden')) {
+    if (!Cookies.get('popupHidden') && !plan.isSubscription) {
       setIsVisible(true);
     }
-  }, []);
-
-  useEffect(() => {
-    const targetDate = new Date('February 20, 2025 23:59:59').getTime();
-    const updateCountdown = () => {
-      const now = new Date().getTime();
-      const distance = targetDate - now;
-
-      if (distance < 0) {
-        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-        return;
-      }
-
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      setTimeLeft({ days, hours, minutes, seconds });
-    };
-
-    const timerId = setInterval(updateCountdown, 1000);
-    updateCountdown(); // Initial call
-    return () => clearInterval(timerId);
-  }, []);
+  }, [plan.isSubscription]);
 
   const handleClose = () => {
     setIsVisible(false);
     Cookies.set('popupHidden', 'true', { expires: 0.5 });
   };
 
+  const handleContact = () => {
+    handleClose();
+    window.location.href = `/subscription?priceId=${plan.link}`;
+  };
+
   if (!isVisible) return null;
 
-  
   return (
     <AnimatePresence>
       {isVisible && (
@@ -76,34 +69,39 @@ const PopUp: React.FC = () => {
 
             <div className="p-8 md:p-12 text-center">
               <div className="mb-6">
-                <h2 className="text-3xl md:text-4xl font-bold mb-2">🎉 Oferta de Lanzamiento</h2>
-                <p className="text-lg md:text-xl opacity-90">¡Obtén un descuento exclusivo!</p>
+                <h2 className="text-3xl md:text-4xl font-bold mb-2">🎉 Oferta Especial</h2>
+                <p className="text-lg md:text-xl opacity-90">¡Obtén acceso exclusivo ahora mismo!</p>
               </div>
 
               <div className="relative inline-block mb-8">
                 <div className="absolute inset-0 bg-white/20 blur-2xl rounded-full" />
-                <div className="relative text-6xl md:text-8xl font-black bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">
-                  10% OFF
+                <div className="relative text-6xl md:text-5xl font-black bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">
+                  {plan.name}
                 </div>
               </div>
 
               <div className="mb-8">
-                <p className="uppercase text-sm tracking-wider opacity-80 mb-4">La oferta termina en:</p>
-                <div className="grid grid-cols-4 gap-3 max-w-md mx-auto">
-                  {Object.entries(timeLeft).map(([unit, value]) => (
-                    <div key={unit} className="bg-white/10 backdrop-blur-sm rounded-lg p-3">
-                      <div className="text-2xl md:text-4xl font-bold mb-1">{value}</div>
-                      <div className="text-xs uppercase tracking-wider opacity-80">{unit}</div>
+                <p className="text-xl md:text-2xl mb-6 max-w-md mx-auto">
+                  ¡No pierdas esta oportunidad única! Beneficios incluyen:
+                </p>
+                
+                <div className="grid grid-cols-2 gap-4 mb-8 max-w-xl">
+                  {defaultFeatures.map((feature, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      {feature}
                     </div>
                   ))}
                 </div>
               </div>
 
               <button
-                onClick={handleClose}
-                className="inline-block bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black font-bold px-8 py-3 rounded-full transform transition-all duration-300 hover:scale-105 shadow-lg"
+                onClick={handleContact}
+                className="inline-block bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-black font-bold px-8 py-3 rounded-full transform transition-all duration-300 hover:scale-105 shadow-lg w-full md:w-auto"
               >
-                ¡Quiero el Descuento!
+                ¡Contrata Ahora!
               </button>
             </div>
 

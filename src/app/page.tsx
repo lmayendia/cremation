@@ -58,7 +58,7 @@ export default async function Home() {
           <CTASection />
           <TestimonialsSection testimonials={testimonios} />
           <CreativePricing plans={precios}/>
-          <Popup />
+          <Popup  plan={oneTimeData}/>
         </div>
         <FAQComponent FAQ={FAQ} />
       </main>
