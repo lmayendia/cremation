@@ -75,7 +75,7 @@ const PopUp: React.FC<PopUpProps> = ({ plan }) => {
 
               <div className="relative inline-block mb-8">
                 <div className="absolute inset-0 bg-white/20 blur-2xl rounded-full" />
-                <div className="relative text-6xl md:text-5xl font-black bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">
+                <div className="relative text-3xl md:text-5xl font-black bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">
                   {plan.name}
                 </div>
               </div>
@@ -87,7 +87,7 @@ const PopUp: React.FC<PopUpProps> = ({ plan }) => {
                 
                 <div className="grid grid-cols-2 gap-4 mb-8 max-w-xl">
                   {defaultFeatures.map((feature, index) => (
-                    <div key={index} className="flex items-center gap-2">
+                    <div key={index} className="flex gap-2 text-xs md:text-lg">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
