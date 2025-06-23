@@ -174,9 +174,9 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: initialLoggedIn }) => {
           {/* <Link className="link-button hover:font-bold py-2" href="/proveedores">
             Proveedores
           </Link> */}
-          <Link className="link-button hover:font-bold py-2" href="/urnas">
+          {/* <Link className="link-button hover:font-bold py-2" href="/urnas">
             Urnas
-          </Link>
+          </Link> */}
           <Link className="link-button hover:font-bold py-2" href="/contact">
             Contacto
           </Link>
@@ -279,13 +279,13 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: initialLoggedIn }) => {
         >
           Proveedores
         </Link> */}
-        <Link
+        {/* <Link
           className="link-button hover:font-bold py-2 w-full text-left"
           href="/urnas"
           onClick={() => setIsMobileMenuOpen(false)}
         >
           Urnas
-        </Link>
+        </Link> */}
         <Link
           className="link-button hover:font-bold py-2 w-full text-left"
           href="/contact"

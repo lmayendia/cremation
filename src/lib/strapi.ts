@@ -3,7 +3,6 @@ interface QueryUserOptions extends RequestInit {}
 
 export async function query(url: string) {
   try {
-    console.log(`${BACKEND_URL}/api/${url}`)
     const res = await fetch(`${BACKEND_URL}/api/${url}`, {
       method: "GET",
         headers: {

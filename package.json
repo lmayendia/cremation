@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "tunnel": "ssh -R 80:localhost:3000 serveo.net"
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^2.8.1",

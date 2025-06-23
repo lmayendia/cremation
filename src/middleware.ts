@@ -9,11 +9,11 @@ export async function middleware(req: NextRequest) {
 
   // ===== Handle Country Detection via Header =====
   // Retrieve the country code from Vercel's geolocation header, defaulting to 'US'
-  let country = req.headers.get('x-vercel-ip-country') || 'US';
+  let country = req.headers.get('x-vercel-ip-country') || 'PR';
 
   // If the country isn't 'PR' or 'US', default to 'US'
   if (country !== 'PR' && country !== 'US') {
-    country = 'US';
+    country = 'PR';
   }
 
   // Add the country to the request headers (so it's accessible on the client/server)
