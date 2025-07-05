@@ -1,4 +1,4 @@
-import { cookies } from 'next/headers'; // Import 'cookies' from 'next/headers'
+// import { cookies } from 'next/headers'; // Import 'cookies' from 'next/headers'
 import CTASection from "@/components/CTASection";
 import ComparisonSection from "@/components/ComparissonSection";
 import Hero from "@/components/Hero";
