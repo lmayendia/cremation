@@ -6,14 +6,14 @@ import PlanningSection from "@/components/PlanningSection";
 import TestimonialsSection from "@/components/Testimonials";
 import Popup from '@/components/PopUp';
 import CreativePricing from '@/components/PricingSection2';
-import { query } from '@/lib/strapi';
+// import { query } from '@/lib/strapi';
 import { Plan } from '@/types';
 import { FAQComponent } from '@/components/FAQ';
 
 export default async function Home() {
 
-  const cookieStore = cookies();
-  const country = (cookieStore.get('user-country')?.value ?? 'PR').toLowerCase();
+  // const cookieStore = cookies();
+  // const country = (cookieStore.get('user-country')?.value ?? 'PR').toLowerCase();
   // const response = await query(`home-${country}?populate[Testimonios][populate]=img&populate[Precios]=*&populate[FAQ]=*`);
 
   // const precios: Plan[] = response.data.Precios;
