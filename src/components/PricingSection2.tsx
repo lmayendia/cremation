@@ -89,7 +89,7 @@ export default function CreativePricing({ plans }: CreativePricingProps) {
   return (
     <section className="py-24" id="pricing">
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-20">
+        <div className="text-center  mb-20">
           <div className="inline-flex items-center bg-primary-100 text-primary-600 px-6 py-3 rounded-full mb-8">
             <span className="mr-2">⭐</span>
             <span className="font-semibold">
@@ -97,11 +97,11 @@ export default function CreativePricing({ plans }: CreativePricingProps) {
             </span>
           </div>
 
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-8 uppercase">
+          <h2 className="text-2xl md:text-5xl font-bold text-gray-800 mb-8 uppercase">
             Planes diseñados para tu tranquilidad
           </h2>
 
-          <div className="max-w-5xl mx-auto text-xl text-gray-600 space-y-4">
+          <div className="max-w-5xl mx-auto text-md md:text-xl text-gray-600 space-y-4">
             <p>
               El presupuesto de cada familia es diferente. Es por eso que ofrecemos
               planes que se ajustan a todos los presupuestos. Tenemos planes con{" "}

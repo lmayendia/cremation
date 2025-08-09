@@ -38,7 +38,7 @@ export const FAQComponent: React.FC<FAQComponentProps> = ({ FAQ }) => {
           >
             {/* Wrap the question and arrow in a flex container */}
             <div className="flex justify-between items-center">
-              <h3 className="text-xl font-bold text-gray-700">{item.title}</h3>
+              <h3 className="md:text-xl text-lg font-bold text-gray-700">{item.title}</h3>
               <div
                 className={`transform transition-transform duration-500 ${
                   activeIndex === index ? "rotate-180" : ""

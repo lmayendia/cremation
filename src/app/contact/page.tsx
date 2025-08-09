@@ -6,17 +6,17 @@ import React from 'react';
 const ClientContact: React.FC = () => {
   return (
     <div className="py-12 bg-primary-500 text-white relative overflow-hidden -z-20">
-      <h1 className="text-center text-5xl z-10">Nuestros métodos de contacto:</h1>
-      <div className="relative flex md:flex-row flex-col justify-center items-start z-10">
+      <h1 className="text-center text-2xl md:text-5xl z-10 font-bold">Nuestros métodos de contacto:</h1>
+      <div className="relative flex md:flex-row flex-col justify-center items-start z-10 h-screen p-2 md:p-0">
         <div className="text-center md:text-left md:max-w-lg ">
-          <h1 className="text-4xl font-bold mt-44 mb-2 ">Para atención inmediata:</h1>
-          <h4 className='text-xl mb-6'>Puedes llamarnos directamente a nuestra oficina y consultar por cualquier información</h4>
+          <h1 className="text-2xl md:text-4xl font-bold mt-44 mb-2 ">Para atención inmediata:</h1>
+          <h4 className='text-md md:text-xl mb-6'>Puedes llamarnos directamente a nuestra oficina y consultar por cualquier información</h4>
           <div className='border-b-1 md:mx-0 mx-12 border border-white mb-12'></div>
             <a href="tel:555-555555" className="px-6 py-4 text-xl bg-black rounded-xl">
                 555-555-5555
             </a>
         </div>
-        <div className="max-w-2xl p-12">
+        <div className="max-w-3xl p-4 md:p-12">
           <ContactForm />
         </div>
       </div>

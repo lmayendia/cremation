@@ -85,49 +85,50 @@ const Footer = () => {
         <div className="flex flex-col items-center md:items-start mb-4 md:mb-0">
           <div className="text-xl md:text-2xl font-bold">
             <Link href="/">
-              <Image
-                src="/images/logo-white.png"
-                width={200}
-                height={200}
-                alt="Logo Cremacion Directa"
-                className="w-36 h-auto md:w-[200px] md:h-[200px]"
-              />
+              <div className="relative w-96 h-16 ms-auto">
+                <Image
+                  src="/images/logo-white.png"
+                  fill
+                  className="object-contain w-full h-full"
+                  alt="Logo Cremacion Directa"
+                />
+              </div>
             </Link>
           </div>
-          <p className="text-xs md:text-sm mt-8 md:mt-12 border-t-2 pt-4 md:pt-6">
+          <p className="text-xs md:text-sm mt-8 md:mt-12 pt-4 md:pt-6">
             &copy; {new Date().getFullYear()} CremacionDirecta. All rights reserved.
           </p>
         </div>
 
         {/* Right Side: Navigation Links */}
-        <div className="flex flex-col items-center space-y-3 md:space-y-0 md:space-x-10 text-base md:text-xl">
-          <div className="flex items-center md:items-start border-b-2 pb-2 flex-wrap gap-x-4 gap-y-2">
+        <div className="flex flex-col items-center space-y-3 md:space-y-0 text-base md:text-xl w-full md:w-auto">
+          <div className="flex flex-col md:flex-row items-stretch md:items-start border-b-2 pb-2 w-full gap-y-2 md:gap-y-0 md:gap-x-10 md:text-md">
             <a
               href="/#pricing"
               onClick={handlePlanesClick}
-              className="hover:font-bold py-1 md:py-2 cursor-pointer"
+              className="hover:font-bold py-1 md:py-2 cursor-pointer block text-center md:text-left"
             >
               Planes
             </a>
             <a
               href="/#faq"
               onClick={handleFAQClick}
-              className="hover:font-bold py-1 md:py-2 cursor-pointer"
+              className="hover:font-bold py-1 md:py-2 cursor-pointer block text-center md:text-left"
             >
               Preguntas frecuentes
             </a>
-            <Link className="hover:font-bold py-1 md:py-2" href="/urnas">
+            <Link className="hover:font-bold py-1 md:py-2 block text-center md:text-left" href="/urnas">
               Urnas
             </Link>
-            <Link className="hover:font-bold py-1 md:py-2" href="/contact">
+            <Link className="hover:font-bold py-1 md:py-2 block text-center md:text-left" href="/contact">
               Contacto
             </Link>
-            <Link className="hover:font-bold py-1 md:py-2" href="/terms">
+            <Link className="hover:font-bold py-1 md:py-2 block text-center md:text-left" href="/terms">
               Términos y Condiciones
             </Link>
           </div>
-          <div className="flex justify-end w-full">
-          <Link className="hover:font-bold py-2 md:py-3" href="/proveedores" >
+          <div className="flex w-full pe-4 text-center md:text-right justify-center md:justify-end">
+          <Link className="hover:font-bold py-2 md:py-3 block w-full md:w-auto" href="/proveedores" >
             Conviertete en aliado
           </Link>
           </div>

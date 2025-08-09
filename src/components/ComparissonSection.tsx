@@ -71,7 +71,7 @@ const ComparisonSection: React.FC<ComparisonSectionProps> = ({
             <h2 className="text-3xl md:text-6xl md:leading-tight font-bold text-white uppercase mb-12">
               {section1.heading}
             </h2>
-            <p className="mt-4 text-lg md:text-2xl text-white mb-12">
+            <p className="mt-4 text-md md:text-2xl text-white mb-6 md:mb-12">
               {(() => {
                 const result = section1.firstParagraph.replace(
                   '{{nfdaLink}}', 
@@ -80,7 +80,7 @@ const ComparisonSection: React.FC<ComparisonSectionProps> = ({
                 return <span dangerouslySetInnerHTML={{ __html: result }} />;
               })()}
             </p>
-            <p className="mt-4 text-lg md:text-2xl text-white mb-12">
+            <p className="mt-4 text-md md:text-2xl text-white mb-12">
               {(() => {
                 let result = section1.secondParagraph;
                 result = result.replace('{{subscriptionPrice}}', subscriptionPrice.toString());
@@ -97,7 +97,7 @@ const ComparisonSection: React.FC<ComparisonSectionProps> = ({
                       <Image src="/icons/check.svg" alt="check icon" width={24} height={24} />
                       <RichTextRenderer 
                         content={item} 
-                        className="md:text-xl text-white ml-2" 
+                        className="md:text-lg text-sm text-white ml-2" 
                         as="p"
                       />
                     </li>
@@ -111,7 +111,7 @@ const ComparisonSection: React.FC<ComparisonSectionProps> = ({
                       <Image src="/icons/check.svg" alt="check icon" width={24} height={24} />
                       <RichTextRenderer 
                         content={item} 
-                        className="md:text-xl text-white ml-2" 
+                        className="md:text-lg text-sm text-white ml-2" 
                         as="p"
                       />
                     </li>
@@ -125,7 +125,7 @@ const ComparisonSection: React.FC<ComparisonSectionProps> = ({
             <p className="md:text-xl text-xl text-white line-through">{currency === 'USD' ? '$' : 'RD$'}9,995</p>
             <p className="text-7xl text-primary-100 font-bold mt-2">{currency === 'USD' ? '$' : 'RD$'} {oneTimePrice}</p>
             <div className="w-full mx-auto mt-12 md:mt-8 md:px-12">
-              <h1 className="text-2xl mb-12 text-white">{section1.chartTitle}</h1>
+              <h1 className="text-xl md:text-2xl  mb-12 text-white">{section1.chartTitle}</h1>
               <ResponsiveContainer width="100%" height={350}>
                 <BarChart data={data} layout="horizontal">
                   {/* X-Axis */}
@@ -175,10 +175,10 @@ const ComparisonSection: React.FC<ComparisonSectionProps> = ({
             <div className="grid md:grid-cols-2 grid-cols-2 gap-2 md:gap-6 mt-6">
               {section2.gridItems.map((item, index) => (
                 <div key={index}>
-                  <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
+                  <h3 className="md:text-xl text-sm transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
                     {item.title}
                   </h3>
-                  <p className="text-lg text-gray-600">
+                  <p className="text-md md:text-lg text-gray-600">
                     {item.description}
                   </p>
                 </div>
