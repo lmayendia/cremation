@@ -1,4 +1,4 @@
-const { BACKEND_URL, BACKEND_API_KEY, STRAPI_MASTER_KEY } = process.env;
+const { BACKEND_URL, STRAPI_MASTER_KEY } = process.env;
 interface QueryUserOptions extends RequestInit {}
 
 export async function query(url: string) {

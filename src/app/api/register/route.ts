@@ -49,7 +49,7 @@ export async function POST(req: Request): Promise<Response> {
         body: JSON.stringify({
           email,
           password,
-          username: `${firstName} ${lastName} ${Math.floor(1000 + Math.random() * 9000)}`,
+          username,
           firstName,
           lastName,
           birth_date

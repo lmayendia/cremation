@@ -3,8 +3,8 @@ import { RichTextContent } from '@/types';
 
 type RawCompareSection = {
   heading: string;
-  firstParagraph: any[];
-  secondParagraph: any[];
+  firstParagraph: Array<{ children: Array<{ text: string }> }>;
+  secondParagraph: Array<{ children: Array<{ text: string }> }>;
   subscriptionPrice: number;
   oneTimePrice: number;
   nfdaLinkText: string;
@@ -17,12 +17,12 @@ export const mapCompareSection = (
   currency: string = 'USD',
 ) => {
   /* tiny helper – flattens Strapi (Slate) nodes into plain HTML */
-  const toHtml = (nodes: any[]) =>
+  const toHtml = (nodes: Array<{ children: Array<{ text: string }> }>) =>
     nodes
-      .map((n) => n.children.map((c: any) => c.text).join(''))
+      .map((n) => n.children.map((c) => c.text).join(''))
       .join('<br />');
 
-  const nfdaLink = `<a href="${raw.nfdaUrl}" target="_blank" rel="noopener noreferrer">${raw.nfdaLinkText}</a>`;
+  const nfdaLink = `<a data-testid="${currency}" href="${raw.nfdaUrl}" target="_blank" rel="noopener noreferrer">${raw.nfdaLinkText}</a>`;
 
   const checklistItems: RichTextContent[] = [
     {

@@ -26,7 +26,7 @@ export interface Plan {
   id: number;
   name: string;
   price: number;
-  description: any[]; // Rich text array from Strapi
+  description: Array<{ type?: string; children?: Array<{ text?: string }>; [key: string]: unknown }>; // Rich text array from Strapi
   link: string;
   currency: string;
   isSubscription: boolean;
@@ -35,9 +35,9 @@ export interface Plan {
 }
 
 export type UrnasResponse = {
-  data: any[];
+  data: unknown[];
   meta: {
-    pagination: any;
+    pagination: { page?: number; pageSize?: number; pageCount?: number; total?: number } | unknown;
   };
 };
 
@@ -121,8 +121,8 @@ export interface NavbarProps {
 }
 
 export type PricingData = {
-  pricingPlansThree: any[];
-  pricingPlansTwo: any[];
+  pricingPlansThree: unknown[];
+  pricingPlansTwo: unknown[];
 };
 
 export interface Review {
@@ -163,6 +163,7 @@ export interface CheckoutSession {
 // SubscriptionData is the transformed frontend data structure
 export interface SubscriptionData {
   id?: number | string;
+  documentId?: string;
   plan_name: string;
   amount_of_cycles: number;
   amount_paid_cycles?: number;

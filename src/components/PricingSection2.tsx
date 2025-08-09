@@ -1,12 +1,13 @@
 import { Plan } from "@/types";
 
 // Helper function to convert Strapi rich text to plain text
-const convertRichTextToPlainText = (richTextArray: any[]): string => {
+type RichTextNode = { type?: string; children?: Array<{ text?: string }>; [key: string]: unknown };
+const convertRichTextToPlainText = (richTextArray: RichTextNode[]): string => {
   if (!Array.isArray(richTextArray)) return '';
   
-  return richTextArray.map(block => {
-    if (block.type === 'paragraph' && block.children) {
-      return block.children.map((child: any) => child.text || '').join('');
+  return richTextArray.map((block: RichTextNode) => {
+    if (block.type === 'paragraph' && Array.isArray(block.children)) {
+      return block.children.map((child: { text?: string }) => child.text || '').join('');
     }
     return '';
   }).join(' ').trim();

@@ -20,7 +20,7 @@ export default async function Home() {
   
   const testimonios = {
     title: page?.TestimoniosSection?.title ?? '',
-    testimonials: page?.TestimoniosSection?.testimonials.map((t: any) => ({
+    testimonials: page?.TestimoniosSection?.testimonials.map((t: { id: number; name: string; location: string; testimonial: string; image: { id: number; documentId: string; url: string } }) => ({
       id: t.id,
       name: t.name,
       location: t.location,

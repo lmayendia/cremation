@@ -10,12 +10,12 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
-import { ChartData, ComparisonSectionProps, UseInViewReturn } from '@/types'; // Import your types
+import { ChartData, ComparisonSectionProps, UseInViewReturn } from '@/types';
 import RichTextRenderer from './RichTextRenderer';
 
 // Function to observe when elements enter and exit the viewport
 const useInView = (threshold: number = 0.6): UseInViewReturn => {
-  const [isInView, setInView] = useState(false);
+  const [isInView, setInView] = useState<boolean>(false);
   const ref = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -122,8 +122,8 @@ const ComparisonSection: React.FC<ComparisonSectionProps> = ({
           </div>
           {/* Right Side: Prices and Chart */}
           <div className="text-center my-8">
-            <p className="md:text-xl text-xl text-white line-through">$9,995</p>
-            <p className="text-7xl text-primary-100 font-bold mt-2">${oneTimePrice}</p>
+            <p className="md:text-xl text-xl text-white line-through">{currency === 'USD' ? '$' : 'RD$'}9,995</p>
+            <p className="text-7xl text-primary-100 font-bold mt-2">{currency === 'USD' ? '$' : 'RD$'} {oneTimePrice}</p>
             <div className="w-full mx-auto mt-12 md:mt-8 md:px-12">
               <h1 className="text-2xl mb-12 text-white">{section1.chartTitle}</h1>
               <ResponsiveContainer width="100%" height={350}>

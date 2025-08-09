@@ -93,7 +93,6 @@ const RegisterForm: React.FC = () => {
     control,
     handleSubmit,
     formState: { errors },
-    setError,
     clearErrors
   } = useForm<RegisterFormData>({
     resolver: yupResolver(validationSchema),

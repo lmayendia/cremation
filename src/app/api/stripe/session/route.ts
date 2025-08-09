@@ -68,7 +68,6 @@ export async function GET(request: Request): Promise<Response> {
     const isSubscription = session.mode === 'subscription';
     
     let price: Stripe.Price;
-    let productId: string;
 
     if (isSubscription) {
       // Extract subscription and plan details
@@ -93,7 +92,7 @@ export async function GET(request: Request): Promise<Response> {
     }
 
     // Get the product ID from the price object
-    productId = price.product as string;
+    const productId = price.product as string;
 
     if (!productId) {
       console.error('Product ID is missing from price object.', { price });
@@ -159,7 +158,7 @@ export async function GET(request: Request): Promise<Response> {
     console.log('Subscription data to save:', JSON.stringify(subscriptionData, null, 2));
     
     // Save subscription data to Strapi
-    const response = await strapiPostRequest<SubscriptionData>('subscriptions', subscriptionData);
+    const response = await strapiPostRequest<unknown>('subscriptions', subscriptionData);
     console.log('Strapi Response:', response);
 
     if (!response) {
@@ -167,9 +166,10 @@ export async function GET(request: Request): Promise<Response> {
       return NextResponse.json({ error: 'Error updating CMS' }, { status: 500 });
     }
 
+    const responseData = response as { data?: { id?: number | string } };
     return NextResponse.json({ 
       message: 'Subscription data saved successfully.',
-      subscriptionId: (response as any)?.data?.id || null 
+      subscriptionId: responseData?.data?.id ?? null 
     }, { status: 200 });
   } catch (error: unknown) {
     console.error('Error processing session data:', error);

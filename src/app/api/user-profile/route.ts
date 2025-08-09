@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers'; // Import 'cookies' from 'next/headers'
-import { query, queryUser } from '@/lib/strapi';
+import { queryUser } from '@/lib/strapi';
 import { UserProfileResponse, User, FilteredUserData, SubscriptionData } from '@/types';
 import { NextResponse } from 'next/server';
 // Removed unused import of jwt since it's not being used
@@ -33,21 +33,21 @@ export async function GET(): Promise<Response> {
     const filteredUserData: FilteredUserData = {
       nombre: user_details.nombre || `${user_details.firstName} ${user_details.lastName}`.trim(),
       email: user_details.email,
-      subscriptions: user_details.subscriptions?.map((sub: any): SubscriptionData => ({
-        id: sub.id || sub.documentId,
+      subscriptions: (user_details.subscriptions ?? []).map((sub): SubscriptionData => ({
+        id: sub.id ?? sub.documentId ?? undefined,
         plan_name: sub.plan_name,
         amount_of_cycles: sub.amount_of_cycles,
         amount_paid_cycles: sub.amount_paid_cycles,
-        amount_paid: sub.amount_paid, // Convert from string to number
-        total_amount_to_pay: sub.total_amount_to_pay, // Convert from string to number
-        amount_due: sub.amount_due, // Convert from string to number
+        amount_paid: sub.amount_paid,
+        total_amount_to_pay: sub.total_amount_to_pay,
+        amount_due: sub.amount_due,
         starting_date: sub.starting_date,
         next_payment_date: sub.next_payment_date,
-        monthly_payment: sub.monthly_payment || 0, // Convert from string to number
+        monthly_payment: sub.monthly_payment ?? 0,
         session_id: sub.session_id,
         users_permissions_user: sub.users_permissions_user,
         stripe_customer: sub.stripe_customer,
-      })) || [],
+      })),
     };
 
 

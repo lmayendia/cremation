@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { cookies } from 'next/headers';
 import { User, CreateCheckoutSessionRequestBody, CreateCheckoutSessionResponse, CreateCheckoutSessionErrorResponse } from '@/types';
-import { queryUser, query } from '@/lib/strapi';
+import { queryUser } from '@/lib/strapi';
 
 // Initialize Stripe with your secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
