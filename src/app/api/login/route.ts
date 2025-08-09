@@ -41,6 +41,15 @@ export async function POST(req: Request) {
       sameSite: 'strict', // Helps protect against CSRF attacks
     });
 
+    // Set a separate cookie for client-side UI state (non-httpOnly)
+    response.cookies.set('isLoggedIn', 'true', {
+      httpOnly: false, // Accessible to JavaScript
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 60 * 60 * 24 * 7, // 1 week
+      path: '/',
+      sameSite: 'strict',
+    });
+
     return response;
   } catch (error) {
     console.error('Error during login:', error);

@@ -64,14 +64,36 @@ export async function GET(request: Request): Promise<Response> {
       return NextResponse.json({ error: 'Amount total is missing from session data.' }, { status: 400 });
     }
 
-    // Extract subscription and plan details
-    const subscription = session.subscription as Stripe.Subscription;
-    console.log('Subscription:', subscription);
+    // Check if this is a subscription or one-time payment
+    const isSubscription = session.mode === 'subscription';
+    
+    let price: Stripe.Price;
+    let productId: string;
 
-    const price = subscription.items.data[0].price as Stripe.Price;
+    if (isSubscription) {
+      // Extract subscription and plan details
+      const subscription = session.subscription as Stripe.Subscription;
+      console.log('Subscription:', subscription);
+
+      if (!subscription) {
+        console.error('Subscription is missing from session data.', { session });
+        return NextResponse.json({ error: 'Subscription is missing from session data.' }, { status: 400 });
+      }
+
+      price = subscription.items.data[0].price as Stripe.Price;
+    } else {
+      // For one-time payments, extract price from line_items
+      const lineItems = await stripe.checkout.sessions.listLineItems(sessionId);
+      if (!lineItems.data.length) {
+        console.error('No line items found for one-time payment session.', { session });
+        return NextResponse.json({ error: 'No line items found for one-time payment session.' }, { status: 400 });
+      }
+      
+      price = lineItems.data[0].price as Stripe.Price;
+    }
 
     // Get the product ID from the price object
-    const productId = price.product as string;
+    productId = price.product as string;
 
     if (!productId) {
       console.error('Product ID is missing from price object.', { price });
@@ -88,36 +110,45 @@ export async function GET(request: Request): Promise<Response> {
 
     const productName = product.name; // e.g., "Plan 24 meses USA"
 
-    // Extract amountOfCycles from the product name
-    const amountOfCyclesMatch = productName.match(/\d+/);
-    if (!amountOfCyclesMatch) {
-      console.error('Unable to extract amount of cycles from product name.', { productName });
-      return NextResponse.json({ error: 'Unable to extract amount of cycles from product name.' }, { status: 400 });
-    }
+    let monthlyPayment: number;
+    let totalAmountToPay: number;
+    let amountPaid: number;
+    let amountDue: number;
+    let startingDate: Date;
+    let nextPaymentDate: Date;
 
-    const amountOfCycles = parseInt(amountOfCyclesMatch[0], 10);
-    const monthlyPayment = session.amount_total / 100;
-    const totalAmountToPay = monthlyPayment * amountOfCycles;
-    const amountPaidCycles = 1;
-    const amountPaid = monthlyPayment * amountPaidCycles;
-    const amountDue = totalAmountToPay - amountPaid;
+    if (isSubscription) {
+      const subscription = session.subscription as Stripe.Subscription;
+      
+      monthlyPayment = session.amount_total! / 100;
+      // For the first subscription cycle, we'll calculate based on the amount paid
+      totalAmountToPay = monthlyPayment; // Initial amount - external function will update as cycles progress
+      amountPaid = monthlyPayment; // First payment completed
+      amountDue = 0; // No amount due after first payment
+      startingDate = new Date(subscription.current_period_start * 1000);
+      nextPaymentDate = new Date(subscription.current_period_end * 1000);
+    } else {
+      // For one-time payments
+      monthlyPayment = session.amount_total! / 100;
+      totalAmountToPay = monthlyPayment;
+      amountPaid = totalAmountToPay;
+      amountDue = 0; // Fully paid
+      startingDate = new Date(session.created * 1000);
+      nextPaymentDate = startingDate; // No next payment for one-time
+    }
 
     const formatDateToYYYYMMDD = (date: Date): string => {
       return date.toISOString().split('T')[0]; // Converts to "YYYY-MM-DD"
     };
 
-    const startingDate = new Date(subscription.current_period_start * 1000);
-    const nextPaymentDate = new Date(subscription.current_period_end * 1000);
-
     const subscriptionData: SubscriptionData = {
-      id: userId.toString(),
       plan_name: productName,
-      amount_of_cycles: amountOfCycles,
-      amount_paid_cycles: amountPaidCycles,
-      amount_paid: parseInt(amountPaid.toFixed(2), 10),
-      monthly_payment: parseInt(monthlyPayment.toFixed(2), 10),
-      total_amount_to_pay: parseInt(totalAmountToPay.toFixed(2), 10),
-      amount_due: parseInt(amountDue.toFixed(2), 10),
+      amount_of_cycles: 1, // Default to 1 as requested - external function will modify as payments are made
+      amount_paid_cycles: 1, // First payment completed
+      amount_paid: parseFloat(amountPaid.toFixed(2)), // Keep as decimal for Strapi
+      monthly_payment: parseFloat(monthlyPayment.toFixed(2)), // Keep as decimal for Strapi
+      total_amount_to_pay: parseFloat(totalAmountToPay.toFixed(2)), // Keep as decimal for Strapi
+      amount_due: parseFloat(amountDue.toFixed(2)), // Keep as decimal for Strapi
       starting_date: formatDateToYYYYMMDD(startingDate),
       next_payment_date: formatDateToYYYYMMDD(nextPaymentDate),
       session_id: sessionId,
@@ -125,7 +156,9 @@ export async function GET(request: Request): Promise<Response> {
       stripe_customer: stripeCustomerStrapiId,
     };
     
-    // Wrap subscriptionData in a 'data' object as required by Strapi
+    console.log('Subscription data to save:', JSON.stringify(subscriptionData, null, 2));
+    
+    // Save subscription data to Strapi
     const response = await strapiPostRequest<SubscriptionData>('subscriptions', subscriptionData);
     console.log('Strapi Response:', response);
 
@@ -134,7 +167,10 @@ export async function GET(request: Request): Promise<Response> {
       return NextResponse.json({ error: 'Error updating CMS' }, { status: 500 });
     }
 
-    return NextResponse.json({ message: 'Subscription data saved successfully.' }, { status: 200 });
+    return NextResponse.json({ 
+      message: 'Subscription data saved successfully.',
+      subscriptionId: (response as any)?.data?.id || null 
+    }, { status: 200 });
   } catch (error: unknown) {
     console.error('Error processing session data:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

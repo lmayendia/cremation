@@ -11,6 +11,7 @@ import {
   Cell,
 } from "recharts";
 import { ChartData, ComparisonSectionProps, UseInViewReturn } from '@/types'; // Import your types
+import RichTextRenderer from './RichTextRenderer';
 
 // Function to observe when elements enter and exit the viewport
 const useInView = (threshold: number = 0.6): UseInViewReturn => {
@@ -42,6 +43,9 @@ const ComparisonSection: React.FC<ComparisonSectionProps> = ({
   oneTimePrice,
   subscriptionPrice,
   currency,
+  section1,
+  section2,
+  section3,
 }) => {
   const [isInView1, ref1] = useInView(0.2);
   const [isInView2, ref2] = useInView(0.3);
@@ -65,50 +69,53 @@ const ComparisonSection: React.FC<ComparisonSectionProps> = ({
           {/* Left Side: Heading, Subheading and List */}
           <div className="text-left p-6">
             <h2 className="text-3xl md:text-6xl md:leading-tight font-bold text-white uppercase mb-12">
-              Descubre porque la cremación es tu mejor opción:
+              {section1.heading}
             </h2>
             <p className="mt-4 text-lg md:text-2xl text-white mb-12">
-              De acuerdo con la <a className="italic" href="https://nfda.org">NFDA</a>, el costo promedio de un entierro tradicional ronda los <strong>$9,995</strong>. A esto se suman los costos de adquirir una parcela, la lápida, las flores y otros gastos administrativos, lo que puede <strong>aumentar considerablemente</strong> el total.
+              {(() => {
+                const result = section1.firstParagraph.replace(
+                  '{{nfdaLink}}', 
+                  `<a class="italic" href="${section1.nfdaUrl || 'https://nfda.org'}">${section1.nfdaLinkText || 'NFDA'}</a>`
+                );
+                return <span dangerouslySetInnerHTML={{ __html: result }} />;
+              })()}
             </p>
             <p className="mt-4 text-lg md:text-2xl text-white mb-12">
-              En <strong>Cremación Directa</strong>, te ofrecemos dos opciones para tu tranquilidad:
-              <br />
-              <strong>${subscriptionPrice} al mes</strong> con nuestro plan de suscripción, o bien un <strong>pago único de ${oneTimePrice}</strong> para un servicio de por vida.
+              {(() => {
+                let result = section1.secondParagraph;
+                result = result.replace('{{subscriptionPrice}}', subscriptionPrice.toString());
+                result = result.replace('{{oneTimePrice}}', oneTimePrice.toString());
+                return <span dangerouslySetInnerHTML={{ __html: result }} />;
+              })()}
             </p>
 
             <div className="grid grid-cols-2 gap-4 md:mt-6">
               <div>
                 <ul className="space-y-5">
-                  <li className="flex items-start">
-                    <Image src="/icons/check.svg" alt="check icon" width={24} height={24} />
-                    <p className="md:text-xl text-white ml-2">
-                      Recogido y traslado. <span className="italic text-sm"><br />De ser necesario se llevará al Instituto de Ciencias Forenses.</span>
-                    </p>
-                  </li>
-                  <li className="flex items-start">
-                    <Image src="/icons/check.svg" alt="check icon" width={24} height={24} />
-                    <p className="md:text-xl text-white ml-2">Traslado a nuestras facilidades.</p>
-                  </li>
-                  <li className="flex items-start">
-                    <Image src="/icons/check.svg" alt="check icon" width={24} height={24} />
-                    <p className="md:text-xl text-white ml-2">Tramitación de toda la permisología.</p>
-                  </li>
+                  {section1.checklistItems.slice(0, 3).map((item, index) => (
+                    <li key={index} className="flex items-start">
+                      <Image src="/icons/check.svg" alt="check icon" width={24} height={24} />
+                      <RichTextRenderer 
+                        content={item} 
+                        className="md:text-xl text-white ml-2" 
+                        as="p"
+                      />
+                    </li>
+                  ))}
                 </ul>
               </div>
               <div>
                 <ul className="space-y-5">
-                  <li className="flex items-start">
-                    <Image src="/icons/check.svg" alt="check icon" width={24} height={24} />
-                    <p className="md:text-xl text-white ml-2">Proceso completo de cremación.</p>
-                  </li>
-                  <li className="flex items-start">
-                    <Image src="/icons/check.svg" alt="check icon" width={24} height={24} />
-                    <p className="md:text-xl text-white ml-2">Preparación de todas las certificaciones necesarias.</p>
-                  </li>
-                  <li className="flex items-start">
-                    <Image src="/icons/check.svg" alt="check icon" width={24} height={24} />
-                    <p className="md:text-xl text-white ml-2">Urna temporera.</p>
-                  </li>
+                  {section1.checklistItems.slice(3, 6).map((item, index) => (
+                    <li key={index + 3} className="flex items-start">
+                      <Image src="/icons/check.svg" alt="check icon" width={24} height={24} />
+                      <RichTextRenderer 
+                        content={item} 
+                        className="md:text-xl text-white ml-2" 
+                        as="p"
+                      />
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -118,7 +125,7 @@ const ComparisonSection: React.FC<ComparisonSectionProps> = ({
             <p className="md:text-xl text-xl text-white line-through">$9,995</p>
             <p className="text-7xl text-primary-100 font-bold mt-2">${oneTimePrice}</p>
             <div className="w-full mx-auto mt-12 md:mt-8 md:px-12">
-              <h1 className="text-2xl mb-12 text-white">Comparación entre precios de entierro y cremación</h1>
+              <h1 className="text-2xl mb-12 text-white">{section1.chartTitle}</h1>
               <ResponsiveContainer width="100%" height={350}>
                 <BarChart data={data} layout="horizontal">
                   {/* X-Axis */}
@@ -153,8 +160,8 @@ const ComparisonSection: React.FC<ComparisonSectionProps> = ({
           {/* Left Side: Image */}
           <div className="relative w-full md:h-5/6 rounded-xl overflow-hidden h-[350px]">
             <Image
-              src="/images/family-happy.jpg"
-              alt="Cremation Service"
+              src={section2.imageSrc || "/images/family-happy.jpg"}
+              alt={section2.imageAlt || "Cremation Service"}
               className="object-cover"
               fill
             />
@@ -163,46 +170,24 @@ const ComparisonSection: React.FC<ComparisonSectionProps> = ({
           {/* Right Side: Content with 2x2 Grid */}
           <div className="text-left px-6 sm:mt-6">
             <h2 className="text-3xl md:text-6xl font-bold text-gray-800 uppercase md:leading-tight md:mb-20">
-              Brindale paz a tus seres queridos
+              {section2.heading}
             </h2>
             <div className="grid md:grid-cols-2 grid-cols-2 gap-2 md:gap-6 mt-6">
-              <div>
-                <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
-                  Reduce el estrés 🔻
-                </h3>
-                <p className="text-lg text-gray-600">
-                  Al planificar con nosotros, eliminas la carga emocional y financiera.
-                </p>
-              </div>
-              <div>
-                <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
-                  Apoyo en el Proceso 🤝
-                </h3>
-                <p className="text-lg text-gray-600">
-                  Nuestros planes incluyen servicios completos de cremación.
-                </p>
-              </div>
-              <div>
-                <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
-                  Transparencia 📝
-                </h3>
-                <p className="text-lg text-gray-600">
-                  Plan claro y sin costos ocultos.
-                </p>
-              </div>
-              <div>
-                <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
-                  Tranquilidad 🧘‍♀️
-                </h3>
-                <p className="text-lg text-gray-600">
-                  Nuestros servicios están diseñados para respaldarte y ofrecerte tranquilidad en el proceso.
-                </p>
-              </div>
+              {section2.gridItems.map((item, index) => (
+                <div key={index}>
+                  <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
+                    {item.title}
+                  </h3>
+                  <p className="text-lg text-gray-600">
+                    {item.description}
+                  </p>
+                </div>
+              ))}
             </div>
             <div className="md:py-16 pt-16">
-              <a href="#pricing">
+              <a href={section2.buttonLink || "#pricing"}>
                 <button className="border-0 rounded-lg md:text-xl bg-primary-700 text-white font-bold inline-block px-6 py-3 transition delay-100 transform hover:scale-105">
-                  SUSCRIBETE AHORA
+                  {section2.buttonText}
                 </button>
               </a>
             </div>
@@ -222,8 +207,8 @@ const ComparisonSection: React.FC<ComparisonSectionProps> = ({
           {/* Right Side: Image */}
           <div className="relative md:w-full md:h-full rounded-xl overflow-hidden group md:hidden block h-[400px] mt-6 md:mt-09">
             <Image
-              src="/images/holding-hand.jpg"
-              alt="Funeral Service"
+              src={section3.mobileImageSrc || "/images/holding-hand.jpg"}
+              alt={section3.mobileImageAlt || "Funeral Service"}
               className="object-cover w-full h-full"
               fill
             />
@@ -231,46 +216,24 @@ const ComparisonSection: React.FC<ComparisonSectionProps> = ({
 
           <div className="text-left px-6">
             <h2 className="text-3xl md:text-6xl md:leading-tight font-bold text-gray-800 ">
-              CONGELA EL PRECIO DE HOY
+              {section3.heading}
             </h2>
             <div className="grid grid-cols-2 gap-6 md:mt-6">
-              <div>
-                <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
-                  👌 Pronto
-                </h3>
-                <p className="text-lg text-gray-600">
-                  Comienza tu plan de cremación sin necesidad de hacer un pago inicial.
-                </p>
-              </div>
-              <div>
-                <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
-                  Precio ❄️
-                </h3>
-                <p className="text-lg text-gray-600">
-                  Asegura el costo actual de nuestros servicios y protégete de futuros aumentos.
-                </p>
-              </div>
-              <div>
-                <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
-                  {currency === 'USD' ? '$' : currency} {subscriptionPrice} 💸
-                </h3>
-                <p className="text-lg text-gray-600">
-                  Comienza con pagos mensuales accesibles, brindando tranquilidad con un plan completo.
-                </p>
-              </div>
-              <div>
-                <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
-                  Inmediato💨
-                </h3>
-                <p className="text-lg text-gray-600">
-                  El contratante puede disfrutar del servicio desde el primer día.
-                </p>
-              </div>
+              {section3.gridItems.map((item, index) => (
+                <div key={index}>
+                  <h3 className="md:text-xl transition delay-100 transform hover:scale-105 font-semibold text-white bg-black rounded-full px-4 py-2 my-10 text-start">
+                    {item.title}
+                  </h3>
+                  <p className="text-lg text-gray-600">
+                    {item.description}
+                  </p>
+                </div>
+              ))}
             </div>
             <div className="md:py-16 pt-16">
-              <a href="#pricing">
+              <a href={section3.buttonLink || "#pricing"}>
                 <button className="border-0 rounded-lg md:text-xl bg-primary-700 text-white font-bold inline-block px-6 py-3 transition delay-100 transform hover:scale-105">
-                  SUSCRIBETE AHORA
+                  {section3.buttonText}
                 </button>
               </a>
             </div>
@@ -279,8 +242,8 @@ const ComparisonSection: React.FC<ComparisonSectionProps> = ({
           {/* Right Side: Image */}
           <div className="relative w-full h-5/6 rounded-xl overflow-hidden md:block hidden">
             <Image
-              src="/images/daughter-with-parents.jpg"
-              alt="Funeral Service"
+              src={section3.imageSrc || "/images/daughter-with-parents.jpg"}
+              alt={section3.imageAlt || "Funeral Service"}
               className="object-cover w-full h-full"
               fill
             />

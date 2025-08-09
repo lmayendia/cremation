@@ -31,16 +31,38 @@ const SuccessPage: React.FC = () => {
           throw new Error(errorData.error || 'Invalid or expired session ID.');
         }
 
-        // Fetch session data
-        const data: CheckoutSession = await response.json();
+        // Parse response - it's now a success message, not session data
+        const data = await response.json();
+        
+        // Check if subscription was saved successfully
+        if (data.message !== 'Subscription data saved successfully.') {
+          throw new Error('Subscription was not saved properly.');
+        }
+        
+        console.log('Subscription saved with ID:', data.subscriptionId);
 
-        // Verify the session object has required fields, otherwise handle as invalid
-        if (!data.id || !data.customer_email) {
-          throw new Error('Invalid session details received.');
+        // Fetch user profile to get email for display
+        const userResponse = await fetch('/api/user-profile', {
+          method: 'GET',
+        });
+        
+        let userEmail = 'user@example.com'; // fallback
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          userEmail = userData.email || userEmail;
         }
 
-        // Set session data if valid
-        setSession(data);
+        // Create a session object for display purposes
+        const displaySession: CheckoutSession = {
+          id: sessionId,
+          object: 'checkout.session',
+          status: 'complete',
+          customer: '',
+          customer_email: userEmail,
+          subscription: ''
+        };
+        
+        setSession(displaySession);
       } catch (error: unknown) {
         // Redirect user to home on error
         router.push('/');

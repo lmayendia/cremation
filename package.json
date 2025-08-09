@@ -10,6 +10,7 @@
     "tunnel": "ssh -R 80:localhost:3000 serveo.net"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.1",
     "@stripe/react-stripe-js": "^2.8.1",
     "@stripe/stripe-js": "^4.9.0",
     "@types/recharts": "^1.8.29",
@@ -20,9 +21,11 @@
     "react": "^18",
     "react-datepicker": "^8.0.0",
     "react-dom": "^18",
+    "react-hook-form": "^7.62.0",
     "react-scroll-parallax": "^3.4.5",
     "recharts": "^2.12.7",
-    "stripe": "^17.3.0"
+    "stripe": "^17.3.0",
+    "yup": "^1.7.0"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",

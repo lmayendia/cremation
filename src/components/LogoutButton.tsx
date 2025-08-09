@@ -18,6 +18,16 @@ const LogoutButton: React.FC = () => {
       });
 
       if (res.ok) {
+        // Trigger the storage event to notify the navbar of the JWT change
+        localStorage.setItem('jwt-changed', 'true');
+        
+        // Dispatch a custom storage event since setting localStorage from the same window doesn't trigger the event
+        window.dispatchEvent(new StorageEvent('storage', {
+          key: 'jwt-changed',
+          newValue: 'true',
+          storageArea: localStorage
+        }));
+        
         router.refresh();
         router.push('/sign-in'); // Redirect to login page after logout
       } else {
@@ -32,7 +42,7 @@ const LogoutButton: React.FC = () => {
   return (
     <button
       onClick={handleLogout}
-      className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition duration-200">
+      className="bg-red-500 text-white px-4 py-1 rounded-md hover:bg-red-600 transition duration-200">
       Logout
     </button>
   );

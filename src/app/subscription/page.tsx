@@ -15,6 +15,7 @@ const NewSubscriptionPage: React.FC = () => {
   
   const searchParams = useSearchParams();
   const priceId = searchParams.get('priceId');
+  const mode = searchParams.get('mode') || 'subscription'; // Default to subscription if not specified
   const router = useRouter();
   const pathname = usePathname();
 
@@ -29,19 +30,20 @@ const NewSubscriptionPage: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({ priceId, mode }),
       });
 
-      if (response.redirected || response.status === 401 || response.status === 403) {
+      if (response.redirected || response.status === 401 || response.status === 403 || response.status === 307) {
         // Redirect to login with the current path and query parameters as the 'redirect' parameter
         const redirectUrl = `${pathname}?${searchParams.toString()}`;
-        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/sign-in?redirect=${encodeURIComponent(redirectUrl)}`);
+        router.push(`/sign-in?redirect=${encodeURIComponent(redirectUrl)}`);
         return null;
       }
 
       if (!response.ok) {
         // Navigate to /sign-in if the response is not OK
-        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/sign-in`);
+        console.log('Response not OK:', response.status, response.statusText);
+        router.push(`/sign-in`);
         return null;
       }
 
@@ -50,17 +52,18 @@ const NewSubscriptionPage: React.FC = () => {
 
       if (!client_secret) {
         // Navigate to /sign-in if client secret is missing
-        router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/sign-in`);
+        router.push(`/sign-in`);
         return null;
       }
 
       return client_secret;
     } catch (error) {
       // Navigate to /sign-in if an error occurs
-      router.push(`${process.env.NEXT_PUBLIC_BASE_URL}/sign-in`);
+      console.error('Error fetching client secret:', error);
+      router.push(`/sign-in`);
       return null;
     }
-  }, [priceId, pathname, searchParams, router]);
+  }, [priceId, pathname, searchParams, router, mode]);
 
   // Fetch the client secret when the component mounts
   useEffect(() => {

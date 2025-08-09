@@ -1,5 +1,16 @@
 import { Plan } from "@/types";
 
+// Helper function to convert Strapi rich text to plain text
+const convertRichTextToPlainText = (richTextArray: any[]): string => {
+  if (!Array.isArray(richTextArray)) return '';
+  
+  return richTextArray.map(block => {
+    if (block.type === 'paragraph' && block.children) {
+      return block.children.map((child: any) => child.text || '').join('');
+    }
+    return '';
+  }).join(' ').trim();
+};
 
 interface CreativePricingProps {
   plans: Plan[];
@@ -20,7 +31,7 @@ const PricingCard = ({ plan }: { plan: Plan }) => (
 
         <div>
             <h3 className="text-2xl font-bold text-gray-900 mb-3">{plan.name}</h3>
-            <p className="text-lg text-gray-600 mb-6">{plan.description}</p>
+            <p className="text-lg text-gray-600 mb-6">{convertRichTextToPlainText(plan.description)}</p>
 
             <div className="mb-8">
                 <span className="text-5xl font-black text-primary-500">${plan.price}</span>
@@ -43,7 +54,7 @@ const PricingCard = ({ plan }: { plan: Plan }) => (
             </div>
         </div>
 
-        <a href={`/subscription?priceId=${plan.link}`} className={`w-full py-4 px-6 rounded-lg font-bold transition-colors text-center
+        <a href={`/subscription?priceId=${plan.link}&mode=${plan.isSubscription ? 'subscription' : 'payment'}`} className={`w-full py-4 px-6 rounded-lg font-bold transition-colors text-center
             ${plan.featured
                 ? "bg-primary-500 text-white hover:bg-primary-600"
                 : "bg-gray-900 text-white hover:bg-gray-800"}`}>

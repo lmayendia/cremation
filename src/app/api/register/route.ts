@@ -19,7 +19,7 @@ export async function POST(req: Request): Promise<Response> {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${process.env.BACKEND_API_KEY}`,
+          Authorization: `Bearer ${process.env.STRAPI_MASTER_KEY}`,
         },
       }
     );
@@ -49,11 +49,14 @@ export async function POST(req: Request): Promise<Response> {
         body: JSON.stringify({
           email,
           password,
-          username
+          username: `${firstName} ${lastName} ${Math.floor(1000 + Math.random() * 9000)}`,
+          firstName,
+          lastName,
+          birth_date
         }),
       }
     );
-
+    console.log(registrationData);
     // Extract user ID from registration response
     const userId = registrationData.user?.id;
 
@@ -75,7 +78,7 @@ export async function POST(req: Request): Promise<Response> {
       );
     }
 
-    // After registration, set the JWT in HTTP-only cookie
+    // After registration, return success without setting JWT cookie
     const response = NextResponse.json(
       {
         data: registrationData.user,
@@ -83,15 +86,6 @@ export async function POST(req: Request): Promise<Response> {
       },
       { status: 200 }
     );
-
-    // Set the JWT as an HTTP-only cookie
-    response.cookies.set('jwt', registrationData.jwt, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 1 week
-    });
 
     return response;
   } catch (error) {

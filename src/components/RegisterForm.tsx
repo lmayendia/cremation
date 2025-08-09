@@ -1,25 +1,111 @@
 "use client"
 import React, { useState, useEffect } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { handleRegister } from '@/lib/handle-register';
-import { RegisterFormData, RegisterFormErrors } from '@/types';
+import { RegisterFormData } from '@/types';
 import { useRouter } from 'next/navigation';
 
+// Validation schema
+const validationSchema = yup.object({
+  email: yup
+    .string()
+    .required('El correo electrónico es requerido.')
+    .email('Por favor, introduce un correo electrónico válido.')
+    .test('secure-email', 'El dominio del correo electrónico no es válido.', function(value) {
+      if (!value) return false;
+      
+      // Enhanced email validation
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      
+      // Check if email matches basic pattern
+      if (!emailRegex.test(value)) return false;
+      
+      // Extract domain part after @
+      const domain = value.split('@')[1];
+      if (!domain) return false;
+      
+      // Split domain by dots to check each part
+      const domainParts = domain.split('.');
+      
+      // Check that the top-level domain (last part) contains only letters
+      const tld = domainParts[domainParts.length - 1];
+      if (!/^[a-zA-Z]+$/.test(tld)) return false;
+      
+      // Check that domain parts don't start or end with hyphens
+      for (const part of domainParts) {
+        if (part.startsWith('-') || part.endsWith('-') || part.length === 0) {
+          return false;
+        }
+      }
+      
+      // Additional security: prevent consecutive dots
+      if (domain.includes('..')) return false;
+      
+      return true;
+    }),
+  firstName: yup
+    .string()
+    .required('El nombre es requerido.')
+    .trim()
+    .min(1, 'El nombre es requerido.'),
+  lastName: yup
+    .string()
+    .required('El apellido es requerido.')
+    .trim()
+    .min(1, 'El apellido es requerido.'),
+  birth_date: yup
+    .string()
+    .required('La fecha de nacimiento es requerida.')
+    .test('age', 'Debes tener al menos 18 años para registrarte.', function(value) {
+      if (!value) return false;
+      const birthDate = new Date(value);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        return age - 1 >= 18;
+      }
+      return age >= 18;
+    }),
+  password: yup
+    .string()
+    .required('La contraseña es requerida.')
+    .min(8, 'La contraseña debe tener entre 8 y 14 caracteres.')
+    .max(14, 'La contraseña debe tener entre 8 y 14 caracteres.'),
+  confirmPassword: yup
+    .string()
+    .required('La confirmación de contraseña es requerida.')
+    .oneOf([yup.ref('password')], 'Las contraseñas no coinciden.'),
+});
+
 const RegisterForm: React.FC = () => {
-  const [formData, setFormData] = useState<RegisterFormData>({
-    email: '',
-    firstName: '',
-    lastName: '',
-    birth_date: '',
-    password: '',
-    confirmPassword: '',
-  });
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [errors, setErrors] = useState<RegisterFormErrors>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isRegistered, setIsRegistered] = useState(false);
+  const [serverError, setServerError] = useState<string>('');
   const router = useRouter();
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    setError,
+    clearErrors
+  } = useForm<RegisterFormData>({
+    resolver: yupResolver(validationSchema),
+    defaultValues: {
+      email: '',
+      firstName: '',
+      lastName: '',
+      birth_date: '',
+      password: '',
+      confirmPassword: '',
+    },
+  });
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -34,75 +120,27 @@ const RegisterForm: React.FC = () => {
     checkAuth();
   }, [router]);
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setErrors({});
-
-    const newErrors: RegisterFormErrors = {};
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/;
-
-    if (!emailRegex.test(formData.email)) {
-      newErrors.email = 'Por favor, introduce un correo electrónico válido.';
-    }
-    if (!formData.firstName || formData.firstName.trim() === '') {
-      newErrors.firstName = 'El nombre es requerido.';
-    }
-    if (!formData.lastName || formData.lastName.trim() === '') {
-      newErrors.lastName = 'El apellido es requerido.';
-    }
-    if (!formData.birth_date) {
-      newErrors.birth_date = 'La fecha de nacimiento es requerida.';
-    }
-    if (formData.password.length < 8 || formData.password.length > 14) {
-      newErrors.password = 'La contraseña debe tener entre 8 y 14 caracteres.';
-    }
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Las contraseñas no coinciden.';
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
+  const onSubmit = async (formData: RegisterFormData) => {
+    setServerError('');
+    clearErrors();
     setIsLoading(true);
 
     try {
       await handleRegister(formData);
-      localStorage.setItem('jwt-changed', Date.now().toString());
-      setIsRegistered(true); // Changed from router.push
+      setIsRegistered(true);
     } catch (err: unknown) {
-      if (typeof err === 'object' && err !== null && 'general' in err) {
-        setErrors(err as RegisterFormErrors);
-      } else {
-        console.log(err)
-        if (typeof err === 'object' && err !== null && 'error' in err) {
-          if (err.error === 'Email is already taken') {
-
-            setErrors({ general: "El correo ya está en uso" });
-          } else {
-            setErrors({ general: (err as { error: string }).error });
-
-          }
+      if (typeof err === 'object' && err !== null && 'error' in err) {
+        if (err.error === 'Email is already taken') {
+          setServerError("El correo ya está en uso");
         } else {
-          setErrors({ general: 'Ha ocurrido un error. Por favor, intenta de nuevo.' });
+          setServerError((err as { error: string }).error);
         }
+      } else {
+        setServerError('Ha ocurrido un error. Por favor, intenta de nuevo.');
       }
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date);
-    setFormData({
-      ...formData,
-      birth_date: date ? date.toISOString().split('T')[0] : '',
-    });
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   return (
@@ -126,104 +164,128 @@ const RegisterForm: React.FC = () => {
             Volver a Iniciar Sesión
           </a>
         </div>) : (
-          <form onSubmit={onSubmit}>
-            {errors.general && (
-              <p className="text-red-500 text-center mb-4">{errors.general}</p>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {serverError && (
+              <p className="text-red-500 text-center mb-4">{serverError}</p>
             )}
             <div className="lg:flex gap-x-4">
               <div className="mb-4 lg:w-1/2">
                 <label className="block text-gray-700 mb-2">Nombre</label>
-                <input
-                  type="text"
+                <Controller
                   name="firstName"
-                  placeholder="Nombre"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  required
-                  className={`w-full p-3 border ${errors.firstName ? 'border-red-500' : 'border-gray-300'
-                    } rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                  control={control}
+                  render={({ field }) => (
+                    <input
+                      {...field}
+                      type="text"
+                      placeholder="Nombre"
+                      className={`w-full p-3 border ${errors.firstName ? 'border-red-500' : 'border-gray-300'
+                        } rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                    />
+                  )}
                 />
-                {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>}
+                {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName.message}</p>}
               </div>
               <div className="mb-4 lg:w-1/2">
                 <label className="block text-gray-700 mb-2">Apellido</label>
-                <input
-                  type="text"
+                <Controller
                   name="lastName"
-                  placeholder="Apellido"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  required
-                  className={`w-full p-3 border ${errors.lastName ? 'border-red-500' : 'border-gray-300'
-                    } rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                  control={control}
+                  render={({ field }) => (
+                    <input
+                      {...field}
+                      type="text"
+                      placeholder="Apellido"
+                      className={`w-full p-3 border ${errors.lastName ? 'border-red-500' : 'border-gray-300'
+                        } rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                    />
+                  )}
                 />
-                {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>}
+                {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName.message}</p>}
               </div>
             </div>
 
             {/* Birth Date with customised calendar UI */}
             <div className="mb-4 w-full">
               <label className="block text-gray-700 mb-2">Fecha de nacimiento</label>
-              <DatePicker
-                selected={selectedDate}
-                onChange={handleDateChange}
-                placeholderText="Selecciona tu fecha de nacimiento"
-                dateFormat="MM-dd-yyyy"
-                className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                calendarClassName="react-datepicker-custom"
-                showYearDropdown
-                showMonthDropdown
-                dropdownMode="select"
-                minDate={new Date(1900, 0, 1)}
-                maxDate={new Date()}
-                yearDropdownItemNumber={100}
+              <Controller
+                name="birth_date"
+                control={control}
+                render={({ field }) => (
+                  <DatePicker
+                    selected={field.value ? new Date(field.value) : null}
+                    onChange={(date: Date | null) => {
+                      field.onChange(date ? date.toISOString().split('T')[0] : '');
+                    }}
+                    placeholderText="Selecciona tu fecha de nacimiento"
+                    dateFormat="MM-dd-yyyy"
+                    className={`w-full p-3 border ${errors.birth_date ? 'border-red-500' : 'border-gray-300'
+                      } rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                    calendarClassName="react-datepicker-custom"
+                    showYearDropdown
+                    showMonthDropdown
+                    dropdownMode="select"
+                    minDate={new Date(1900, 0, 1)}
+                    maxDate={new Date(Date.now() - 18 * 365 * 24 * 60 * 60 * 1000)} // 18 years ago
+                    yearDropdownItemNumber={100}
+                  />
+                )}
               />
-              {errors.birth_date && <p className="text-red-500 text-sm mt-1">{errors.birth_date}</p>}
+              {errors.birth_date && <p className="text-red-500 text-sm mt-1">{errors.birth_date.message}</p>}
             </div>
 
             <div className="mb-4">
               <label className="block text-gray-700 mb-2">Correo electrónico</label>
-              <input
-                type="email"
+              <Controller
                 name="email"
-                placeholder="Correo electrónico"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className={`w-full p-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'
-                  } rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                control={control}
+                render={({ field }) => (
+                  <input
+                    {...field}
+                    type="email"
+                    placeholder="Correo electrónico"
+                    className={`w-full p-3 border ${errors.email ? 'border-red-500' : 'border-gray-300'
+                      } rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                  />
+                )}
               />
-              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
             </div>
 
             <div className="mb-4">
               <label className="block text-gray-700 mb-2">Contraseña</label>
-              <input
-                type="password"
+              <Controller
                 name="password"
-                placeholder="Contraseña"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                className={`w-full p-3 border ${errors.password ? 'border-red-500' : 'border-gray-300'
-                  } rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                control={control}
+                render={({ field }) => (
+                  <input
+                    {...field}
+                    type="password"
+                    placeholder="Contraseña"
+                    className={`w-full p-3 border ${errors.password ? 'border-red-500' : 'border-gray-300'
+                      } rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                  />
+                )}
               />
-              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
             </div>
 
             <div className="mb-4">
               <label className="block text-gray-700 mb-2">Confirmar contraseña</label>
-              <input
-                type="password"
+              <Controller
                 name="confirmPassword"
-                placeholder="Confirmar contraseña"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-                className={`w-full p-3 border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
-                  } rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                control={control}
+                render={({ field }) => (
+                  <input
+                    {...field}
+                    type="password"
+                    placeholder="Confirmar contraseña"
+                    className={`w-full p-3 border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
+                      } rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                  />
+                )}
               />
-              {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>}
+              {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>}
             </div>
 
             <button
@@ -246,7 +308,8 @@ const RegisterForm: React.FC = () => {
           </form>)}
       </div>
 
-      <div className="hidden lg:flex w-full lg:w-1/2 p-8 bg-gradient-to-br from-primary-300 to-primary-500 text-white items-center justify-center rounded-b-md lg:rounded-none lg:rounded-r-md">
+
+      {!isRegistered && (<div className="hidden lg:flex w-full lg:w-1/2 p-8 bg-gradient-to-br from-primary-300 to-primary-500 text-white items-center justify-center rounded-b-md lg:rounded-none lg:rounded-r-md">
         <div className="text-center">
           <h2 className="text-4xl font-semibold">Bienvenido a Cremación Directa</h2>
           <p className="mt-4 text-lg">¿Ya tienes una cuenta?</p>
@@ -257,7 +320,7 @@ const RegisterForm: React.FC = () => {
             Inicia sesión
           </a>
         </div>
-      </div>
+      </div>)}
     </div>
   );
 };

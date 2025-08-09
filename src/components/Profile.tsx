@@ -72,10 +72,10 @@ const ProfilePage: React.FC = () => {
                     </p>
                     <p className="mb-2">
                       <strong>Installments Remaining:</strong>{' '}
-                      {subscription.amount_of_cycles - subscription.amount_paid_cycles}
+                      {subscription.amount_of_cycles - (subscription.amount_paid_cycles || 0)}
                     </p>
                     <p className="mb-2">
-                      <strong>Amount Paid:</strong> ${subscription.amount_paid.toFixed(2)}
+                      <strong>Amount Paid:</strong> ${(subscription.amount_paid || 0).toFixed(2)}
                     </p>
                     <p className="mb-2">
                       <strong>Total Amount:</strong> ${subscription.total_amount_to_pay.toFixed(2)}
@@ -83,7 +83,7 @@ const ProfilePage: React.FC = () => {
                   </div>
                   <div>
                     <p className="mb-2">
-                      <strong>Amount Due:</strong> ${subscription.amount_due.toFixed(2)}
+                      <strong>Amount Due:</strong> ${(subscription.amount_due || 0).toFixed(2)}
                     </p>
                     <p className="mb-2">
                       <strong>Purchase Date:</strong> {subscription.starting_date}

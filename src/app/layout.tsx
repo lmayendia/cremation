@@ -20,7 +20,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const isLoggedIn = Boolean(cookies().get('jwt')?.value);
+  // Use JWT cookie as the primary source of truth for authentication
+  const jwtCookie = cookies().get('jwt')?.value;
+  const isLoggedIn = Boolean(jwtCookie);
+  
   return (
     <html lang="en">
       <Head>

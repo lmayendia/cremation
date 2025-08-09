@@ -19,26 +19,22 @@ export async function GET(): Promise<Response> {
     }
 
     // Fetch user data from Strapi's "users/me" endpoint
-    const user: User = await queryUser<User>('users/me?populate=*', {
+    // Fetch basic user data from Strapi
+    const user_details = await queryUser<User>('users/me?populate=*', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
     });
-
-
-    const user_details: User = await query(`users/${user.id}?populate=*`)
-
-    // Filter the data to match only the required fields for the frontend
-    // Directly assert the type of `user_details.subscriptions`
-
+    console.log('token', token);
+    console.log('user_details', user_details);
     // Map BackendSubscription to SubscriptionData
     const filteredUserData: FilteredUserData = {
-      nombre: user_details.nombre,
+      nombre: user_details.nombre || `${user_details.firstName} ${user_details.lastName}`.trim(),
       email: user_details.email,
-      subscriptions: user_details.subscriptions.map((sub): SubscriptionData => ({
-        id: sub.id,
+      subscriptions: user_details.subscriptions?.map((sub: any): SubscriptionData => ({
+        id: sub.id || sub.documentId,
         plan_name: sub.plan_name,
         amount_of_cycles: sub.amount_of_cycles,
         amount_paid_cycles: sub.amount_paid_cycles,
@@ -51,7 +47,7 @@ export async function GET(): Promise<Response> {
         session_id: sub.session_id,
         users_permissions_user: sub.users_permissions_user,
         stripe_customer: sub.stripe_customer,
-      })),
+      })) || [],
     };
 
 

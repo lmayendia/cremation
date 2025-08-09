@@ -2,18 +2,21 @@ import { Review } from '@/types';
 import Image from 'next/image';
 import React from 'react';
 
-
-
 interface TestimonialsSectionProps {
-  testimonials: Review[];
+  testimonialsData: {
+    title: string;
+    testimonials: Review[];
+  };
 }
 
-const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testimonials }) => {
+const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testimonialsData }) => {
+  const { title, testimonials } = testimonialsData;
+  
   return (
     <section className="md:py-32 pt-20">
       <div className="container mx-auto text-center">
         <h2 className="text-3xl md:text-6xl font-bold text-gray-800 md:mb-24 mb-6 md:p-0 p-6">
-          DESCUBRE LO QUE NUESTROS CLIENTES TIENEN PARA DECIR
+          {title}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:p-0 p-6">
           {testimonials.map((testimonial) => {
@@ -41,7 +44,19 @@ const TestimonialsSection: React.FC<TestimonialsSectionProps> = ({ testimonials 
                     <p className="text-gray-500">{testimonial.location}</p>
                   </div>
                 </div>
-                <p className="text-gray-600">{testimonial.testimonial}</p>
+                <p className="text-gray-600 mb-4">{testimonial.testimonial}</p>
+                <div className="flex justify-center space-x-1">
+                  {[...Array(5)].map((_, index) => (
+                    <Image
+                      key={index}
+                      src="/icons/star.svg"
+                      alt="Star"
+                      width={24}
+                      height={24}
+                      className="text-yellow-400 drop-shadow-md"
+                    />
+                  ))}
+                </div>
               </div>
             );
           })}

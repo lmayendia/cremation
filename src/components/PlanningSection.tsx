@@ -1,8 +1,23 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { PlanningSectionProps } from "@/types";
 
-const PlanningSection = () => {
+const PlanningSection: React.FC<PlanningSectionProps> = ({
+  mainHeading,
+  description,
+  highlightedText1,
+  highlightedText2,
+  highlightedText3,
+  quotesImageSrc = "/images/quotes.png",
+  quotesImageAlt = "Quote marks",
+  shieldImageSrc = "/images/shield.png",
+  shieldImageAlt = "Shield",
+  leftArrowImageSrc = "/images/left-arrow.svg",
+  leftArrowImageAlt = "Left Arrow",
+  rightArrowImageSrc = "/images/right-arrow.svg",
+  rightArrowImageAlt = "Right Arrow"
+}) => {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef(null);
 
@@ -36,8 +51,8 @@ const PlanningSection = () => {
           {/* Left (Opening) Quote Image */}
           <div className="relative w-24 h-24 md:w-16 md:mb-12 md:h-16 mr-2">
             <Image
-              src="/images/quotes.png"
-              alt="Opening Quote"
+              src={quotesImageSrc}
+              alt={quotesImageAlt}
               fill
               className="w-2 h-2 object-contain"
               />
@@ -45,14 +60,14 @@ const PlanningSection = () => {
 
           {/* Heading Text */}
           <h2 className="text-3xl text-center mt-12 md:mt-0 md:text-7xl font-bold text-gray-800">
-            Planificar es un gesto de amor
+            {mainHeading}
           </h2>
 
           {/* Right (Closing) Quote Image with 180 Degree Rotation */}
           <div className="relative w-24 h-24 md:w-16 md:mb-12 md:h-16 ml-2 rotate-180">
             <Image
-              src="/images/quotes.png"
-              alt="Closing Quote"
+              src={quotesImageSrc}
+              alt={quotesImageAlt}
               fill
               className="object-contain"
             />
@@ -60,18 +75,22 @@ const PlanningSection = () => {
         </div>
 
         <p className="mt-6 text-lg md:text-2xl text-gray-600 max-w-3xl mx-auto">
-          Descubre una nueva manera de planificar la vida eterna. Planes con{" "}
-          <span className="font-bold text-black">CERO PRONTO</span> y cómodos{" "}
-          <span className="font-bold uppercase text-black">pagos mensuales</span> que se ajustan
-          a tu presupuesto. <span className="uppercase font-bold text-black">Sin intereses</span>.
+          {(() => {
+            let result = description;
+            result = result.replace('{{highlight1}}', `<span class="font-bold text-black">${highlightedText1}</span>`);
+            result = result.replace('{{highlight2}}', `<span class="font-bold uppercase text-black">${highlightedText2}</span>`);
+            result = result.replace('{{highlight3}}', `<span class="uppercase font-bold text-black">${highlightedText3}</span>`);
+            
+            return <span dangerouslySetInnerHTML={{ __html: result }} />;
+          })()}
         </p>
       </div>
 
       {/* Shield Image with Grow Effect */}
       <div className="absolute lg:block hidden bottom-10 right-24 w-24 h-24 md:w-32 md:h-32 transition-transform transform hover:scale-110 duration-300">
         <Image
-          src="/images/shield.png" // Path to the shield image
-          alt="Shield"
+          src={shieldImageSrc}
+          alt={shieldImageAlt}
           fill
           className="object-contain"
 />
@@ -86,8 +105,8 @@ const PlanningSection = () => {
         }`}
       >
         <Image
-          src="/images/left-arrow.svg"
-          alt="Left Arrow"
+          src={leftArrowImageSrc}
+          alt={leftArrowImageAlt}
           width={250}
           height={250}
         />
@@ -101,8 +120,8 @@ const PlanningSection = () => {
         }`}
       >
         <Image
-          src="/images/right-arrow.svg"
-          alt="Right Arrow"
+          src={rightArrowImageSrc}
+          alt={rightArrowImageAlt}
           width={250}
           height={250}
           

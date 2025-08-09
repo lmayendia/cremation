@@ -13,5 +13,14 @@ export async function POST(): Promise<Response> {
     expires: new Date(0), // Expire the cookie immediately
   });
 
+  // Clear the isLoggedIn cookie as well
+  response.cookies.set('isLoggedIn', '', {
+    httpOnly: false,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    path: '/',
+    expires: new Date(0), // Expire the cookie immediately
+  });
+
   return response;
 }

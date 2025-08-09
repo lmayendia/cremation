@@ -73,9 +73,9 @@ const PopUp: React.FC<PopUpProps> = ({ plan }) => {
                 <p className="text-lg md:text-xl opacity-90">¡Obtén acceso exclusivo ahora mismo!</p>
               </div>
 
-              <div className="relative inline-block mb-8">
+              <div className="relative inline-block mb-12">
                 <div className="absolute inset-0 bg-white/20 blur-2xl rounded-full" />
-                <div className="relative text-3xl md:text-5xl font-black bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">
+                <div className="relative text-3xl md:text-7xl leading-loose font-black bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">
                   {plan.name}
                 </div>
               </div>

@@ -6,7 +6,7 @@ export async function query(url: string) {
     const res = await fetch(`${BACKEND_URL}/api/${url}`, {
       method: "GET",
         headers: {
-            Authorization: `Bearer ${BACKEND_API_KEY}`,
+            Authorization: `Bearer ${STRAPI_MASTER_KEY}`,
         }
     });
     return await res.json();

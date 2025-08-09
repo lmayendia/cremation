@@ -4,12 +4,19 @@ export const handleRegister = async (
   formData: RegisterFormData
 ): Promise<void> => {
   try {
-    const payload = { ...formData };
-
+  
+    const registrationData = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      birth_date: formData.birth_date,
+      email: formData.email,
+      password: formData.password
+    };
+  
     const res = await fetch('/api/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(registrationData),
       credentials: 'include', // Include cookies
     });
 

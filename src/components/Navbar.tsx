@@ -16,12 +16,45 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: initialLoggedIn }) => {
   const pathname: string | null = usePathname();
   const router = useRouter();
 
+  // Sync with actual authentication state after mount using server-side check
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        const response = await fetch('/api/check-auth');
+        const data = await response.json();
+        setIsLoggedIn(data.authenticated);
+      } catch (error) {
+        console.error('Error checking auth status:', error);
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkAuthStatus();
+  }, []);
+
   useEffect(() => {
     // Listen for `jwt` changes in localStorage to update `isLoggedIn` status
     const handleStorage = (event: StorageEvent) => {
       if (event.key === 'jwt-changed') {
-        const jwt = Cookies.get('jwt');
-        setIsLoggedIn(!!jwt);
+        // Add a small delay to ensure cookie is fully processed
+        setTimeout(async () => {
+          const isLoggedInCookie = Cookies.get('isLoggedIn');
+          
+          if (isLoggedInCookie !== undefined) {
+            // If isLoggedIn cookie exists, use it
+            setIsLoggedIn(!!isLoggedInCookie);
+          } else {
+            // Fall back to server-side check if cookie doesn't exist
+            try {
+              const response = await fetch('/api/check-auth');
+              const data = await response.json();
+              setIsLoggedIn(data.authenticated);
+            } catch (error) {
+              console.error('Error checking auth status:', error);
+              setIsLoggedIn(false);
+            }
+          }
+        }, 50);
 
         // Remove `jwt-changed` from localStorage after 1 second
         setTimeout(() => {
@@ -148,8 +181,8 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: initialLoggedIn }) => {
           <Link href="/">
             <Image
               src="/images/logo-small.png"
-              width={50}
-              height={50}
+              width={45}
+              height={45}
               alt="Logo Cremacion Directa"
             />
           </Link>
