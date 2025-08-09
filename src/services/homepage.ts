@@ -21,7 +21,7 @@ export async function getHomepage(
   // → /api/homepages?filters%5Bcountry%5D%5B%24eq%5D=pr&locale=es&populate=…
   try {
     const res = await query(qs);
-    console.log('Strapi response:', res);
+    console.log('Strapi response:', res.data[0].TestimoniosSection.testimonials);
     return res?.data[0];
   } catch (error) {
     console.error('Error fetching homepage:', error);

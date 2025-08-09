@@ -171,11 +171,11 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: initialLoggedIn }) => {
 
   return (
     <nav
-      className={`${showNavbar ? "top-0" : "-top-20"
-        } py-2 ${fixed_status} w-full z-50 p-4 transition-all duration-300 ${isScrollingUp ? "bg-white shadow-md" : "bg-transparent"
+      className={`${showNavbar ? "top-0" : "-top-20"} ${fixed_status} left-0 right-0 z-50 max-w-full overflow-x-clip transition-all duration-300 ${
+          isScrollingUp ? "bg-white shadow-md" : "bg-transparent"
         }`}
     >
-      <div className="container mx-auto flex justify-between items-center relative">
+      <div className="container mx-auto flex justify-between items-center relative px-4 py-2">
         {/* Logo */}
         <div className="hover:scale-105 transform transition delay-100">
           <Link href="/">
@@ -267,7 +267,7 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn: initialLoggedIn }) => {
 
       {/* Mobile Navigation Links */}
       <div
-        className={`fixed inset-0 bg-white z- flex flex-col items-start p-6 overflow-y-auto transition-transform duration-300 transform ${isMobileMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-full'
+        className={`fixed inset-0 bg-white z-50 flex flex-col items-start p-6 overflow-y-auto transition-transform duration-300 transform ${isMobileMenuOpen ? 'translate-x-0 opacity-100' : '-translate-x-full'
           }`}
       >
         {/* Close Button */}

@@ -71,7 +71,7 @@ const MapSvg = () => {
         <div className="relative w-96 h-96  -translate-x-2/3 md:-translate-x-52 lg:translate-x-0 z-30">
         {/* The dynamic hover text */}
             {hoveredRegion && (
-                <div className="absolute top-1/2 left-full translate-x-full md:top-2/4 md:right-0 md:translate-x-44 min-w-40">
+                <div className="absolute top-1/2 left-full translate-x-full md:top-2/4 md:translate-x-44 md:min-w-40 min-w-32">
                     <h2 className="uppercase md:text-sm lg:text-sm text-white font-bold ">
                         {renderHoveredText()}
                     </h2>
